@@ -36,6 +36,7 @@ const Home = () => {
         { value: "微酣", label: "微酣" },
         { value: "酩酊大醉", label: "酩酊大醉" },
     ];
+    //這邊套用react select套件再改寫樣式
     const customStyles = {
         control: (provided) => ({
             ...provided,
@@ -73,6 +74,7 @@ const Home = () => {
 
     return (
         <main id="allContent">
+            {/*左邊的image是自己定義的變數名要傳給子元件Carouse.js，右邊的image是上面定義的陣列*/}
             <Carousel images={images} />
             <BaseWineSection baseWines={baseWines} />
             <CocktailSelector

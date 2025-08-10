@@ -10,6 +10,7 @@ const BaseWineSection = ({baseWines}) => {
                     {baseWines.map((wine, index) => (
                         <div key={index} className="basewine_smallcircle">
                             <div className="basewine_button">
+                                {/*對應Home.js*/}
                                 <Link to={wine.path}>{wine.name}</Link>
                             </div>
                         </div>

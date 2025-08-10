@@ -121,6 +121,7 @@ const BaseWineText = () => {
     }
 
     return (
+        //根據一個物件動態產生多個基酒介紹頁的路由，新增基酒資料時，不用再手動加 <Route>
         <Routes>
             {Object.entries(basewineData).map(([key, data]) => (
                 <Route key={key} path={`/${key}`} element={<BaseWine {...data} />} />

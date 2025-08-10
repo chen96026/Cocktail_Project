@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import {useState, useEffect} from "react";
 import {fetchWithAuth} from "../API/LoginAPI.js";
 import Swal from "sweetalert2";
 
