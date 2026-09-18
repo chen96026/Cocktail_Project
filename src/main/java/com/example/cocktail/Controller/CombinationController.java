@@ -4,11 +4,11 @@ import com.example.cocktail.Model.Combinations;
 import com.example.cocktail.Service.CombinationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/lastwine")
@@ -23,14 +23,9 @@ public class CombinationController {
 
     @PostMapping("/addFourCombination")
     @Operation(summary = "後台加入組合至調酒")
-    public ResponseEntity<String> addCombination(@RequestBody Combinations combination) {
-        try {
-            combinationService.addCombination(combination);
-            return ResponseEntity.ok("組合新增成功");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("新增組合失敗: " + e.getMessage());
-        }
+    public ResponseEntity<Map<String, String>> addCombination(@RequestBody Combinations combination) {
+        combinationService.addCombination(combination);
+        return ResponseEntity.ok(Map.of("message", "組合新增成功"));
     }
 
     @GetMapping("/getAllCombinations")

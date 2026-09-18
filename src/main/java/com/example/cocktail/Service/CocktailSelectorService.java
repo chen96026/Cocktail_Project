@@ -3,6 +3,7 @@ package com.example.cocktail.Service;
 import com.example.cocktail.DTO.CockTailDetailDTO;
 import com.example.cocktail.DTO.CocktailBasicDTO;
 import com.example.cocktail.DTO.CocktailSelectorDTO;
+import com.example.cocktail.Exception.NotFoundException;
 import com.example.cocktail.Repository.MaterialRepository;
 import com.example.cocktail.Repository.RecipeRepository;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,9 @@ public class CocktailSelectorService {
      */
     public CockTailDetailDTO getCocktailDetail(Integer recipeId) {
         CockTailDetailDTO detail = recipeRepository.findDetailByRecipeId(recipeId);
+        if (detail == null) {
+            throw new NotFoundException("找不到該調酒的組合資料，ID: " + recipeId);
+        }
         return detail.withMaterials(materialRepository.findMaterialsByRecipeId(recipeId));
     }
 }

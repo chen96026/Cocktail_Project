@@ -3,6 +3,7 @@ package com.example.cocktail.Service;
 import com.example.cocktail.DTO.MaterialDTO;
 import com.example.cocktail.DTO.RecipeDTO;
 import com.example.cocktail.DTO.RecipeRequest;
+import com.example.cocktail.Exception.NotFoundException;
 import com.example.cocktail.Model.BaseWine;
 import com.example.cocktail.Model.Material;
 import com.example.cocktail.Model.Recipe;
@@ -11,6 +12,7 @@ import com.example.cocktail.Repository.RecipeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,20 +57,15 @@ public class RecipeService {
      * @param image   酒譜圖片
      */
     public void addRecipe(RecipeRequest request, MultipartFile image) {
-        try {
-            Recipe recipe = new Recipe();
-            recipe.setEn_title(request.enTitle());
-            recipe.setZh_title(request.zhTitle());
-            recipe.setMethod(request.method());
-            // 上傳圖片，取得圖片 URL
-            recipe.setImage(cloudinaryService.uploadImage(image));
-            recipe.setBaseWines(resolveBaseWines(request.baseWines()));
-            recipe.setMaterials(toMaterials(request.materials(), recipe));
+        Recipe recipe = new Recipe();
+        recipe.setEn_title(request.enTitle());
+        recipe.setZh_title(request.zhTitle());
+        recipe.setMethod(request.method());
+        recipe.setImage(uploadImage(image));
+        recipe.setBaseWines(resolveBaseWines(request.baseWines()));
+        recipe.setMaterials(toMaterials(request.materials(), recipe));
 
-            recipeRepository.save(recipe);
-        } catch (Exception e) {
-            throw new RuntimeException("添加酒譜失敗", e);
-        }
+        recipeRepository.save(recipe);
     }
 
     /**
@@ -77,45 +74,41 @@ public class RecipeService {
      * @param image    新圖片，未帶則保留原圖
      */
     public void updateRecipe(Integer recipeId, RecipeRequest request, MultipartFile image) {
-        try {
-            Recipe existingRecipe = recipeRepository.findByRecipeId(recipeId);
-            if (existingRecipe == null) {
-                throw new RuntimeException("找不到對應的酒譜，ID: " + recipeId);
-            }
-            existingRecipe.setEn_title(request.enTitle());
-            existingRecipe.setZh_title(request.zhTitle());
-            existingRecipe.setMethod(request.method());
-            // 有帶新圖片才更新，否則保留原圖
-            if (image != null && !image.isEmpty()) {
-                existingRecipe.setImage(cloudinaryService.uploadImage(image));
-            }
-            existingRecipe.setBaseWines(resolveBaseWines(request.baseWines()));
+        Recipe existingRecipe = getRecipe(recipeId);
 
-            // 清空舊的材料並設置新的材料
-            existingRecipe.getMaterials().clear();
-            existingRecipe.getMaterials().addAll(toMaterials(request.materials(), existingRecipe));
-
-            recipeRepository.save(existingRecipe);
-        } catch (Exception e) {
-            throw new RuntimeException("更新酒譜失敗！", e);
+        existingRecipe.setEn_title(request.enTitle());
+        existingRecipe.setZh_title(request.zhTitle());
+        existingRecipe.setMethod(request.method());
+        // 有帶新圖片才更新，否則保留原圖
+        if (image != null && !image.isEmpty()) {
+            existingRecipe.setImage(uploadImage(image));
         }
+        existingRecipe.setBaseWines(resolveBaseWines(request.baseWines()));
+
+        // 清空舊的材料並設置新的材料
+        existingRecipe.getMaterials().clear();
+        existingRecipe.getMaterials().addAll(toMaterials(request.materials(), existingRecipe));
+
+        recipeRepository.save(existingRecipe);
     }
 
     /**
      * @param recipe_id 酒譜 ID
      */
     public void deleteRecipe(Integer recipe_id) {
-        Recipe recipe = recipeRepository.findById(recipe_id)
-                .orElseThrow(() -> new RuntimeException("找不到該酒譜！"));
-        recipeRepository.delete(recipe);
+        recipeRepository.delete(getRecipe(recipe_id));
     }
 
     /**
      * @param recipe_id 酒譜 ID
-     * @return 對應的酒譜 Entity，找不到回傳 null
+     * @return 對應的酒譜 Entity
      */
     public Recipe getRecipe(Integer recipe_id) {
-        return recipeRepository.findByRecipeId(recipe_id);
+        Recipe recipe = recipeRepository.findByRecipeId(recipe_id);
+        if (recipe == null) {
+            throw new NotFoundException("找不到該酒譜，ID: " + recipe_id);
+        }
+        return recipe;
     }
 
     /**
@@ -124,6 +117,18 @@ public class RecipeService {
      */
     public List<Recipe> searchRecipes(String keyword) {
         return recipeRepository.searchByKeyword(keyword);
+    }
+
+    /**
+     * @param image 要上傳的圖片
+     * @return 上傳後的圖片 URL
+     */
+    private String uploadImage(MultipartFile image) {
+        try {
+            return cloudinaryService.uploadImage(image);
+        } catch (IOException e) {
+            throw new RuntimeException("圖片上傳失敗", e);
+        }
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.example.cocktail.Service;
 
+import com.example.cocktail.Exception.BusinessException;
 import com.example.cocktail.Model.Combinations;
 import com.example.cocktail.Repository.CombinationRepository;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class CombinationService {
         boolean exists = combinationRepository.existsByMoodAndTasteAndToneAndDrunk(
                 combination.getMood(), combination.getTaste(), combination.getTone(), combination.getDrunk());
         if (exists) {
-            throw new IllegalArgumentException("組合已存在，無法重複新增");
+            throw new BusinessException("組合已存在，無法重複新增");
         }
         combinationRepository.save(combination);
     }

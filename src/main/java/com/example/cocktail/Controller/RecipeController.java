@@ -6,7 +6,6 @@ import com.example.cocktail.Model.Recipe;
 import com.example.cocktail.Service.RecipeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,12 +31,8 @@ public class RecipeController {
     public ResponseEntity<Map<String, String>> addRecipe(
             @RequestPart("recipe") RecipeRequest recipe,
             @RequestPart("image") MultipartFile image) {
-        try {
-            recipeService.addRecipe(recipe, image);
-            return ResponseEntity.ok(Map.of("message", "成功添加酒譜！"));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
-        }
+        recipeService.addRecipe(recipe, image);
+        return ResponseEntity.ok(Map.of("message", "成功添加酒譜！"));
     }
 
     @GetMapping("/getAllRecipe")
@@ -59,34 +54,21 @@ public class RecipeController {
             @PathVariable Integer recipe_id,
             @RequestPart("recipe") RecipeRequest recipe,
             @RequestPart(value = "image", required = false) MultipartFile image) {
-        try {
-            recipeService.updateRecipe(recipe_id, recipe, image);
-            return ResponseEntity.ok(Map.of("message", "更新成功"));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("message", "更新失敗：" + e.getMessage()));
-        }
+        recipeService.updateRecipe(recipe_id, recipe, image);
+        return ResponseEntity.ok(Map.of("message", "更新成功"));
     }
 
     @DeleteMapping("/deleteRecipe/{recipe_id}")
     @Operation(summary = "刪除調酒")
-    public ResponseEntity<String> deleteRecipe(@PathVariable Integer recipe_id) {
-        try {
-            recipeService.deleteRecipe(recipe_id);
-            return ResponseEntity.ok("成功刪除酒譜");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("刪除失敗：" + e.getMessage());
-        }
+    public ResponseEntity<Map<String, String>> deleteRecipe(@PathVariable Integer recipe_id) {
+        recipeService.deleteRecipe(recipe_id);
+        return ResponseEntity.ok(Map.of("message", "成功刪除酒譜"));
     }
 
     @GetMapping("/findRecipeId/{recipe_id}")
     @Operation(summary = "找到該調酒(編輯)")
     public ResponseEntity<Recipe> findRecipe(@PathVariable Integer recipe_id) {
-        Recipe recipe = recipeService.getRecipe(recipe_id);
-        if (recipe == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-        return ResponseEntity.ok(recipe);
+        return ResponseEntity.ok(recipeService.getRecipe(recipe_id));
     }
 
     @GetMapping("/search")

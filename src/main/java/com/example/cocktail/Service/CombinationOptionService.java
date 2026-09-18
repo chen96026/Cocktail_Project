@@ -1,6 +1,7 @@
 package com.example.cocktail.Service;
 
 import com.example.cocktail.DTO.CockTailDetailDTO;
+import com.example.cocktail.Exception.NotFoundException;
 import com.example.cocktail.Model.CombinationOption;
 import com.example.cocktail.Model.Combinations;
 import com.example.cocktail.Model.Recipe;
@@ -43,9 +44,9 @@ public class CombinationOptionService {
         Integer combinationId = combinationOption.getFkCombinationId().getCombinationId();
 
         Recipe recipe = recipeRepository.findById(recipeId)
-                .orElseThrow(() -> new IllegalArgumentException("找不到該酒譜: " + recipeId));
+                .orElseThrow(() -> new NotFoundException("找不到該酒譜: " + recipeId));
         Combinations combination = combinationRepository.findById(combinationId)
-                .orElseThrow(() -> new IllegalArgumentException("找不到該組合: " + combinationId));
+                .orElseThrow(() -> new NotFoundException("找不到該組合: " + combinationId));
 
         combinationOption.setFkRecipeId(recipe);
         combinationOption.setFkCombinationId(combination);
@@ -59,7 +60,7 @@ public class CombinationOptionService {
     @Transactional
     public void removeCombination(Integer recipeId) {
         Recipe recipe = recipeRepository.findById(recipeId)
-                .orElseThrow(() -> new IllegalArgumentException("找不到該酒譜: " + recipeId));
+                .orElseThrow(() -> new NotFoundException("找不到該酒譜: " + recipeId));
         combinationOptionRepository.deleteByFkRecipeId(recipe);
     }
 }

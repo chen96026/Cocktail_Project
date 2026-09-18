@@ -6,7 +6,6 @@ import com.example.cocktail.DTO.CocktailSelectorDTO;
 import com.example.cocktail.Service.CocktailSelectorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,22 +25,12 @@ public class CocktailSelectorController {
     @PostMapping("/getCocktailSelector")
     @Operation(summary = "篩選器符合組合之調酒")
     public ResponseEntity<List<CocktailBasicDTO>> getCocktailSelector(@RequestBody CocktailSelectorDTO selector) {
-        try {
-            List<CocktailBasicDTO> recipes = cocktailSelectorService.findRecipesByCombination(selector);
-            return ResponseEntity.ok(recipes);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        return ResponseEntity.ok(cocktailSelectorService.findRecipesByCombination(selector));
     }
 
     @GetMapping("/getCocktailDetail/{recipeId}")
     @Operation(summary = "篩選器符合調酒之資訊")
     public ResponseEntity<CockTailDetailDTO> getCocktailDetail(@PathVariable Integer recipeId) {
-        try {
-            CockTailDetailDTO detail = cocktailSelectorService.getCocktailDetail(recipeId);
-            return ResponseEntity.ok(detail);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+        return ResponseEntity.ok(cocktailSelectorService.getCocktailDetail(recipeId));
     }
 }
