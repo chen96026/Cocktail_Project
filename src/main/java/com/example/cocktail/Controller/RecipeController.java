@@ -51,24 +51,24 @@ public class RecipeController {
     @PutMapping(value = "/updateRecipe/{recipe_id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "更新調酒內容")
     public ResponseEntity<Map<String, String>> updateRecipe(
-            @PathVariable Integer recipe_id,
+            @PathVariable("recipe_id") Integer recipeId,
             @RequestPart("recipe") RecipeRequest recipe,
             @RequestPart(value = "image", required = false) MultipartFile image) {
-        recipeService.updateRecipe(recipe_id, recipe, image);
+        recipeService.updateRecipe(recipeId, recipe, image);
         return ResponseEntity.ok(Map.of("message", "更新成功"));
     }
 
     @DeleteMapping("/deleteRecipe/{recipe_id}")
     @Operation(summary = "刪除調酒")
-    public ResponseEntity<Map<String, String>> deleteRecipe(@PathVariable Integer recipe_id) {
-        recipeService.deleteRecipe(recipe_id);
+    public ResponseEntity<Map<String, String>> deleteRecipe(@PathVariable("recipe_id") Integer recipeId) {
+        recipeService.deleteRecipe(recipeId);
         return ResponseEntity.ok(Map.of("message", "成功刪除酒譜"));
     }
 
     @GetMapping("/findRecipeId/{recipe_id}")
     @Operation(summary = "找到該調酒(編輯)")
-    public ResponseEntity<Recipe> findRecipe(@PathVariable Integer recipe_id) {
-        return ResponseEntity.ok(recipeService.getRecipe(recipe_id));
+    public ResponseEntity<Recipe> findRecipe(@PathVariable("recipe_id") Integer recipeId) {
+        return ResponseEntity.ok(recipeService.getRecipe(recipeId));
     }
 
     @GetMapping("/search")

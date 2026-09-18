@@ -1,8 +1,6 @@
 import Carousel from "../components/Carousel";
 import BaseWineSection from "../components/BaseWineSection";
 import CocktailSelector from "../components/CocktailSelector";
-import {DRUNK_OPTIONS, MOOD_OPTIONS, TASTE_OPTIONS, TONE_OPTIONS} from "../constants/options.js";
-import {selectStyles} from "../constants/selectStyles.js";
 
 const Home = () => {
     const images = [
@@ -25,13 +23,7 @@ const Home = () => {
             {/*左邊的image是自己定義的變數名要傳給子元件Carouse.js，右邊的image是上面定義的陣列*/}
             <Carousel images={images} />
             <BaseWineSection baseWines={baseWines} />
-            <CocktailSelector
-                feelingOption={MOOD_OPTIONS}
-                tastingOption={TASTE_OPTIONS}
-                toneingOption={TONE_OPTIONS}
-                drunkingOption={DRUNK_OPTIONS}
-                customStyles={selectStyles}
-            />
+            <CocktailSelector/>
         </main>
     );
 };

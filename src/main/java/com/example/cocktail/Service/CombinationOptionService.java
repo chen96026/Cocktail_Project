@@ -40,7 +40,7 @@ public class CombinationOptionService {
      */
     @Transactional
     public void assignCombination(CombinationOption combinationOption) {
-        Integer recipeId = combinationOption.getFkRecipeId().getRecipe_id();
+        Integer recipeId = combinationOption.getFkRecipeId().getRecipeId();
         Integer combinationId = combinationOption.getFkCombinationId().getCombinationId();
 
         Recipe recipe = recipeRepository.findById(recipeId)

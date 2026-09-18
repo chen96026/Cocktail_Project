@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import Swal from "sweetalert2";
 import {BASE_WINES} from "../constants/options.js";
 
-const emptyMaterial = () => ({material_name: "", material_quantity: ""});
+const emptyMaterial = () => ({materialName: "", materialQuantity: ""});
 
 /**
  * 新增與編輯酒譜共用的表單
@@ -82,7 +82,7 @@ const RecipeForm = ({
             method,
             baseWines,
             // 過濾沒填名稱的空白列
-            materials: materials.filter((material) => material.material_name.trim() !== ""),
+            materials: materials.filter((material) => material.materialName.trim() !== ""),
         };
         try {
             await onSubmit(recipe, image);
@@ -149,14 +149,14 @@ const RecipeForm = ({
                             <div key={index} className="material-input">
                                 <input
                                     type="text"
-                                    value={material.material_name}
-                                    onChange={(e) => handleMaterialChange(index, "material_name", e.target.value)}
+                                    value={material.materialName}
+                                    onChange={(e) => handleMaterialChange(index, "materialName", e.target.value)}
                                     placeholder={`材料 ${index + 1}`}//因為陣列從0開始，+1可以讓顯示為材料1、材料2
                                 />
                                 <input
                                     type="text"
-                                    value={material.material_quantity}
-                                    onChange={(e) => handleMaterialChange(index, "material_quantity", e.target.value)}
+                                    value={material.materialQuantity}
+                                    onChange={(e) => handleMaterialChange(index, "materialQuantity", e.target.value)}
                                     placeholder="份量 (EX:20ml)"
                                 />
                                 <div className={`button${classPrefix}Delete`} type="button"

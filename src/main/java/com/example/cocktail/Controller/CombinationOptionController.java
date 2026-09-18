@@ -36,7 +36,7 @@ public class CombinationOptionController {
     public ResponseEntity<Map<String, String>> assignAllCombinations(@RequestBody List<CombinationOption> combinationOptions) {
         for (CombinationOption combinationOption : combinationOptions) {
             // 刪除舊的組合
-            combinationOptionService.removeCombination(combinationOption.getFkRecipeId().getRecipe_id());
+            combinationOptionService.removeCombination(combinationOption.getFkRecipeId().getRecipeId());
             // 新增新的組合
             combinationOptionService.assignCombination(combinationOption);
         }

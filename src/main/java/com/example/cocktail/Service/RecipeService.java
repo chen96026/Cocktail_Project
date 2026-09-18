@@ -58,8 +58,8 @@ public class RecipeService {
      */
     public void addRecipe(RecipeRequest request, MultipartFile image) {
         Recipe recipe = new Recipe();
-        recipe.setEn_title(request.enTitle());
-        recipe.setZh_title(request.zhTitle());
+        recipe.setEnTitle(request.enTitle());
+        recipe.setZhTitle(request.zhTitle());
         recipe.setMethod(request.method());
         recipe.setImage(uploadImage(image));
         recipe.setBaseWines(resolveBaseWines(request.baseWines()));
@@ -76,8 +76,8 @@ public class RecipeService {
     public void updateRecipe(Integer recipeId, RecipeRequest request, MultipartFile image) {
         Recipe existingRecipe = getRecipe(recipeId);
 
-        existingRecipe.setEn_title(request.enTitle());
-        existingRecipe.setZh_title(request.zhTitle());
+        existingRecipe.setEnTitle(request.enTitle());
+        existingRecipe.setZhTitle(request.zhTitle());
         existingRecipe.setMethod(request.method());
         // 有帶新圖片才更新，否則保留原圖
         if (image != null && !image.isEmpty()) {
@@ -93,20 +93,20 @@ public class RecipeService {
     }
 
     /**
-     * @param recipe_id 酒譜 ID
+     * @param recipeId 酒譜 ID
      */
-    public void deleteRecipe(Integer recipe_id) {
-        recipeRepository.delete(getRecipe(recipe_id));
+    public void deleteRecipe(Integer recipeId) {
+        recipeRepository.delete(getRecipe(recipeId));
     }
 
     /**
-     * @param recipe_id 酒譜 ID
+     * @param recipeId 酒譜 ID
      * @return 對應的酒譜 Entity
      */
-    public Recipe getRecipe(Integer recipe_id) {
-        Recipe recipe = recipeRepository.findByRecipeId(recipe_id);
+    public Recipe getRecipe(Integer recipeId) {
+        Recipe recipe = recipeRepository.findByRecipeId(recipeId);
         if (recipe == null) {
-            throw new NotFoundException("找不到該酒譜，ID: " + recipe_id);
+            throw new NotFoundException("找不到該酒譜，ID: " + recipeId);
         }
         return recipe;
     }
@@ -157,8 +157,8 @@ public class RecipeService {
         return materials.stream()
                 .map(dto -> {
                     Material material = new Material();
-                    material.setMaterial_name(dto.material_name());
-                    material.setMaterial_quantity(dto.material_quantity());
+                    material.setMaterialName(dto.materialName());
+                    material.setMaterialQuantity(dto.materialQuantity());
                     material.setRecipe(recipe);
                     return material;
                 })

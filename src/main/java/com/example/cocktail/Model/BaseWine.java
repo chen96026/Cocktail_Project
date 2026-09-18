@@ -7,17 +7,17 @@ import jakarta.persistence.*;
 public class BaseWine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)// 可以自動遞增
-    private Integer base_wine_id;
+    private Integer baseWineId;
 
     @Column(unique = true)
     private String name;
 
-    public Integer getBase_wine_id() {
-        return base_wine_id;
+    public Integer getBaseWineId() {
+        return baseWineId;
     }
 
-    public void setBase_wine_id(Integer base_wine_id) {
-        this.base_wine_id = base_wine_id;
+    public void setBaseWineId(Integer baseWineId) {
+        this.baseWineId = baseWineId;
     }
 
     public String getName() {

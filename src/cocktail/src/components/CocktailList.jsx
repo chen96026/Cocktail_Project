@@ -1,11 +1,10 @@
-import React, {useState} from "react";
-import Modal from "../components/Modal.jsx";
+import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import Swal from "sweetalert2";
+import RecipeDetailModal from "./RecipeDetailModal.jsx";
 import {deletedRecipe} from "../API/RecipeAPI";
 
 const CocktailList = ({cocktails}) => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedCocktail, setSelectedCocktail] = useState(null);
     const navigate = useNavigate();
 
@@ -42,60 +41,28 @@ const CocktailList = ({cocktails}) => {
         }
     };
 
-    const openModal = (cocktail) => {
-        setSelectedCocktail(cocktail);
-        setIsModalOpen(true);
-    };
-
-    const closeModal = () => {
-        setIsModalOpen(false);
-        setSelectedCocktail(null);
-    };
-
     return (
         <section id="cocktaillistSection">
             {cocktails.map((cocktail) => (
-                <div id="cocktaillistDiv" key={cocktail.recipe_id}>
-                    <img id="cocktaillistImg" src={cocktail.image} alt={cocktail.en_title}/>
+                <div id="cocktaillistDiv" key={cocktail.recipeId}>
+                    <img id="cocktaillistImg" src={cocktail.image} alt={cocktail.enTitle}/>
                     <p id="cocktaillistp"
-                       onClick={() => openModal(cocktail)}>{cocktail.en_title} ({cocktail.zh_title})
+                       onClick={() => setSelectedCocktail(cocktail)}>{cocktail.enTitle} ({cocktail.zhTitle})
                     </p>
                     <div className="buttonEditDeleteDiv">
-                        <div className="buttonListEdit" onClick={() => handleEdit(cocktail.recipe_id)}>
+                        <div className="buttonListEdit" onClick={() => handleEdit(cocktail.recipeId)}>
                             <i className="fa-solid fa-pen-to-square"></i></div>
-                        <div className="buttonListDelete" onClick={() => handleDelete(cocktail.recipe_id)}>
+                        <div className="buttonListDelete" onClick={() => handleDelete(cocktail.recipeId)}>
                             <i className="fa-solid fa-trash"></i>
                         </div>
                     </div>
                 </div>
             ))}
-            <Modal isOpen={isModalOpen} onClose={closeModal}>
-                {selectedCocktail && (
-                    <div className="modalSmallDiv">
-                        <img src={selectedCocktail.image}/>
-                        <h2>{selectedCocktail.en_title} ({selectedCocktail.zh_title})</h2>
-                        <section className="modalMaterial">
-                            <div className="materialDiv">材料:</div>
-                            <section className="materialSection">
-                                {selectedCocktail.materials.map((material, index) => (
-                                    <div key={index} className="materialSectionDiv">
-                                        {material.material_name}: {material.material_quantity}
-                                    </div>
-                                ))}
-                            </section>
-                        </section>
-                        <p>
-                            {/*\n代表換行，分割成每組元素*/}
-                            {selectedCocktail.method.split('\n').map((line, index) => (
-                                <React.Fragment key={index}>
-                                    {line}
-                                    <br/>
-                                </React.Fragment>
-                            ))}
-                        </p>
-                    </div>
-                )}
-            </Modal>
+            <RecipeDetailModal
+                isOpen={Boolean(selectedCocktail)}
+                onClose={() => setSelectedCocktail(null)}
+                recipe={selectedCocktail}
+            />
         </section>
     );
 };

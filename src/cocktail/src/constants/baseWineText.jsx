@@ -1,5 +1,3 @@
-import React from "react";
-
 // 六大基酒的介紹文字，key 同時作為 /BaseWine/<key> 的路由路徑
 export const BASE_WINE_TEXT = {
     vodka: {

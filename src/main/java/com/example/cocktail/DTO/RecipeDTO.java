@@ -8,8 +8,8 @@ import java.util.List;
 /**
  * 酒譜列表／查詢用的回傳資料，欄位名沿用既有 API 契約
  */
-public record RecipeDTO(Integer recipe_id, String en_title, String zh_title, String method,
-                        String image, List<String> base_wines, List<MaterialDTO> materials) {
+public record RecipeDTO(Integer recipeId, String enTitle, String zhTitle, String method,
+                        String image, List<String> baseWines, List<MaterialDTO> materials) {
 
     /**
      * @param recipe 來源 Entity
@@ -17,14 +17,14 @@ public record RecipeDTO(Integer recipe_id, String en_title, String zh_title, Str
      */
     public static RecipeDTO from(Recipe recipe) {
         return new RecipeDTO(
-                recipe.getRecipe_id(),
-                recipe.getEn_title(),
-                recipe.getZh_title(),
+                recipe.getRecipeId(),
+                recipe.getEnTitle(),
+                recipe.getZhTitle(),
                 recipe.getMethod(),
                 recipe.getImage(),
                 recipe.getBaseWines().stream().map(BaseWine::getName).toList(),
                 recipe.getMaterials().stream()
-                        .map(m -> new MaterialDTO(m.getMaterial_name(), m.getMaterial_quantity()))
+                        .map(m -> new MaterialDTO(m.getMaterialName(), m.getMaterialQuantity()))
                         .toList()
         );
     }

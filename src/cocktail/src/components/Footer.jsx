@@ -1,4 +1,3 @@
-import React from "react";
 
 const Footer = () => {
   return (
@@ -10,7 +9,7 @@ const Footer = () => {
         <section className="pic2">
           <form action="">
             <div id="miss">
-              <p>Don't miss the fun</p>
+              <p>Don&apos;t miss the fun</p>
             </div>
             <br />
           </form>

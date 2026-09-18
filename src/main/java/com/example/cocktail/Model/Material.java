@@ -9,41 +9,41 @@ public class Material {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer material_id;
+    private Integer materialId;
 
     @Column
-    private String material_name;
+    private String materialName;
 
     @Column
-    private String material_quantity;
+    private String materialQuantity;
 
     @ManyToOne
     @JoinColumn(name = "recipe_id")
     @JsonIgnore
     private Recipe recipe;
 
-    public Integer getMaterial_id() {
-        return material_id;
+    public Integer getMaterialId() {
+        return materialId;
     }
 
-    public void setMaterial_id(Integer material_id) {
-        this.material_id = material_id;
+    public void setMaterialId(Integer materialId) {
+        this.materialId = materialId;
     }
 
-    public String getMaterial_name() {
-        return material_name;
+    public String getMaterialName() {
+        return materialName;
     }
 
-    public void setMaterial_name(String material_name) {
-        this.material_name = material_name;
+    public void setMaterialName(String materialName) {
+        this.materialName = materialName;
     }
 
-    public String getMaterial_quantity() {
-        return material_quantity;
+    public String getMaterialQuantity() {
+        return materialQuantity;
     }
 
-    public void setMaterial_quantity(String material_quantity) {
-        this.material_quantity = material_quantity;
+    public void setMaterialQuantity(String materialQuantity) {
+        this.materialQuantity = materialQuantity;
     }
 
     public Recipe getRecipe() {

@@ -80,7 +80,7 @@ const Admin = () => {
         try {
             // 包裝成後端需要的結構
             const payload = assignments.map(({recipeId, combinationId}) => ({
-                fkRecipeId: {recipe_id: recipeId},
+                fkRecipeId: {recipeId},
                 fkCombinationId: {combinationId},
             }));
             await assignCombinations(payload);

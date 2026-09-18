@@ -1,4 +1,3 @@
-import React from "react";
 
 const Modal = ({ isOpen, onClose, children }) => {
     if (!isOpen) return null; // 如果isOpen為false，不渲染內容

@@ -33,32 +33,32 @@ public class Recipe {
     @JoinTable(
             name = "basewinelist", // 關聯表名稱
             joinColumns = @JoinColumn(name = "recipe_id"),// 連接到Recipe的外鍵，當前實體的，主控方
-            inverseJoinColumns = @JoinColumn(name = "base_wine_id")// 連接到BaseWine的外鍵，被控方
+            inverseJoinColumns = @JoinColumn(name = "baseWineId")// 連接到BaseWine的外鍵，被控方
     )
     private List<BaseWine> baseWines = new ArrayList<>();
 
-    public Integer getRecipe_id() {
+    public Integer getRecipeId() {
         return recipeId;
     }
 
-    public void setRecipe_id(Integer recipe_id) {
-        this.recipeId = recipe_id;
+    public void setRecipeId(Integer recipeId) {
+        this.recipeId = recipeId;
     }
 
-    public String getEn_title() {
+    public String getEnTitle() {
         return enTitle;
     }
 
-    public void setEn_title(String en_title) {
-        this.enTitle = en_title;
+    public void setEnTitle(String enTitle) {
+        this.enTitle = enTitle;
     }
 
-    public String getZh_title() {
+    public String getZhTitle() {
         return zhTitle;
     }
 
-    public void setZh_title(String zh_title) {
-        this.zhTitle = zh_title;
+    public void setZhTitle(String zhTitle) {
+        this.zhTitle = zhTitle;
     }
 
     public String getMethod() {

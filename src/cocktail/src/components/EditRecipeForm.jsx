@@ -14,13 +14,13 @@ const EditRecipeForm = () => {
             try {
                 const recipe = await findByRecipeId(recipe_id);
                 setInitialValues({
-                    enTitle: recipe.en_title,
-                    zhTitle: recipe.zh_title,
+                    enTitle: recipe.enTitle,
+                    zhTitle: recipe.zhTitle,
                     method: recipe.method,
                     baseWines: recipe.baseWines.map((wine) => wine.name),
                     materials: recipe.materials.map((material) => ({
-                        material_name: material.material_name,
-                        material_quantity: material.material_quantity,
+                        materialName: material.materialName,
+                        materialQuantity: material.materialQuantity,
                     })),
                 });
             } catch (error) {

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import {useCallback, useEffect, useState} from "react";
 import CocktailList from "../components/CocktailList";
 import FilterSidebar from "../components/FilterSidebar";
 import {findAllRecipe, findRecipeByBaseWine, searchRecipeByKeyword} from "../API/CocktailList.js";
@@ -9,7 +9,7 @@ const CocktailsPage = () => {
     const [loading, setLoading] = useState(false); // 加載狀態
     const [searchQuery, setSearchQuery] = useState(""); // 搜尋關鍵字
 
-    const loadMoreCocktails = async () => {
+    const loadMoreCocktails = useCallback(async () => {
         setLoading(true);
         let data = [];
         try {
@@ -28,13 +28,13 @@ const CocktailsPage = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [filters, searchQuery]);
 
     useEffect(() => {
         // 搜尋框每打一個字就打一次 API 太吵，等使用者停 300ms 再送
         const timer = setTimeout(loadMoreCocktails, 300);
         return () => clearTimeout(timer);
-    }, [filters, searchQuery]);
+    }, [loadMoreCocktails]);
 
     return (
         <section id="cocktailSection">
