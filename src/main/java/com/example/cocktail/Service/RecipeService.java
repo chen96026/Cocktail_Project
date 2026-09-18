@@ -3,13 +3,10 @@ package com.example.cocktail.Service;
 import com.example.cocktail.DTO.MaterialDTO;
 import com.example.cocktail.DTO.RecipeDTO;
 import com.example.cocktail.DTO.RecipeRequest;
-import com.example.cocktail.JwtUtil;
 import com.example.cocktail.Model.BaseWine;
 import com.example.cocktail.Model.Material;
-import com.example.cocktail.Model.Member;
 import com.example.cocktail.Model.Recipe;
 import com.example.cocktail.Repository.BaseWineRepository;
-import com.example.cocktail.Repository.MemberRepository;
 import com.example.cocktail.Repository.RecipeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,24 +19,15 @@ import java.util.stream.Collectors;
 public class RecipeService {
 
     private final RecipeRepository recipeRepository;
-    private final MemberRepository memberRepository;
     private final BaseWineRepository baseWineRepository;
-    private final JwtUtil jwtUtil;
     private final CloudinaryService cloudinaryService;
-    private final MemberService memberService;
 
     public RecipeService(RecipeRepository recipeRepository,
-                         MemberRepository memberRepository,
                          BaseWineRepository baseWineRepository,
-                         JwtUtil jwtUtil,
-                         CloudinaryService cloudinaryService,
-                         MemberService memberService) {
+                         CloudinaryService cloudinaryService) {
         this.recipeRepository = recipeRepository;
-        this.memberRepository = memberRepository;
         this.baseWineRepository = baseWineRepository;
-        this.jwtUtil = jwtUtil;
         this.cloudinaryService = cloudinaryService;
-        this.memberService = memberService;
     }
 
     /**
@@ -65,24 +53,15 @@ public class RecipeService {
     /**
      * @param request 酒譜內容
      * @param image   酒譜圖片
-     * @param token   JWT，用於取得建立者
      */
-    public void addRecipe(RecipeRequest request, MultipartFile image, String token) {
+    public void addRecipe(RecipeRequest request, MultipartFile image) {
         try {
-            // 從Token中獲取會員帳號
-            String account = jwtUtil.validateToken(token).getSubject();
-            Member member = memberRepository.findByAccount(account);
-            if (member == null) {
-                throw new RuntimeException("會員不存在！");
-            }
-
             Recipe recipe = new Recipe();
             recipe.setEn_title(request.enTitle());
             recipe.setZh_title(request.zhTitle());
             recipe.setMethod(request.method());
             // 上傳圖片，取得圖片 URL
             recipe.setImage(cloudinaryService.uploadImage(image));
-            recipe.setMember(member);
             recipe.setBaseWines(resolveBaseWines(request.baseWines()));
             recipe.setMaterials(toMaterials(request.materials(), recipe));
 
@@ -96,17 +75,13 @@ public class RecipeService {
      * @param recipeId 酒譜 ID
      * @param request  酒譜內容
      * @param image    新圖片，未帶則保留原圖
-     * @param token    JWT，用於權限檢查
      */
-    public void updateRecipe(Integer recipeId, RecipeRequest request, MultipartFile image, String token) {
+    public void updateRecipe(Integer recipeId, RecipeRequest request, MultipartFile image) {
         try {
             Recipe existingRecipe = recipeRepository.findByRecipeId(recipeId);
             if (existingRecipe == null) {
                 throw new RuntimeException("找不到對應的酒譜，ID: " + recipeId);
             }
-            // 檢查權限：ADMIN 通過，USER 僅能改自己的酒譜
-            memberService.checkEditPermission(token, existingRecipe.getMember().getAccount());
-
             existingRecipe.setEn_title(request.enTitle());
             existingRecipe.setZh_title(request.zhTitle());
             existingRecipe.setMethod(request.method());
@@ -128,16 +103,10 @@ public class RecipeService {
 
     /**
      * @param recipe_id 酒譜 ID
-     * @param token     JWT，用於權限檢查
      */
-    public void deleteRecipe(Integer recipe_id, String token) {
-        // 從 Token 中提取用戶帳號
-        String account = jwtUtil.validateToken(token).getSubject();
-        Recipe recipe = recipeRepository.findById(recipe_id)
-                .orElseThrow(() -> new RuntimeException("找不到該酒譜！"));
-        // 如果不是管理員，檢查是否為該酒譜的擁有者
-        if (!memberService.isAdmin(token) && !recipe.getMember().getAccount().equals(account)) {
-            throw new RuntimeException("無權限刪除此酒譜！");
+    public void deleteRecipe(Integer recipe_id) {
+        if (!recipeRepository.existsById(recipe_id)) {
+            throw new RuntimeException("找不到該酒譜！");
         }
         recipeRepository.deleteById(recipe_id);
     }

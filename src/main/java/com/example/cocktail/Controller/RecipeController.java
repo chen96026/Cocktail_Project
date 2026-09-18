@@ -30,11 +30,10 @@ public class RecipeController {
     @PostMapping(value = "/addRecipe", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "新增調酒")
     public ResponseEntity<Map<String, String>> addRecipe(
-            @RequestHeader("Authorization") String authorizationHeader,
             @RequestPart("recipe") RecipeRequest recipe,
             @RequestPart("image") MultipartFile image) {
         try {
-            recipeService.addRecipe(recipe, image, extractToken(authorizationHeader));
+            recipeService.addRecipe(recipe, image);
             return ResponseEntity.ok(Map.of("message", "成功添加酒譜！"));
         } catch (RuntimeException e) {
             return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
@@ -57,12 +56,11 @@ public class RecipeController {
     @PutMapping(value = "/updateRecipe/{recipe_id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "更新調酒內容")
     public ResponseEntity<Map<String, String>> updateRecipe(
-            @RequestHeader("Authorization") String authorizationHeader,
             @PathVariable Integer recipe_id,
             @RequestPart("recipe") RecipeRequest recipe,
             @RequestPart(value = "image", required = false) MultipartFile image) {
         try {
-            recipeService.updateRecipe(recipe_id, recipe, image, extractToken(authorizationHeader));
+            recipeService.updateRecipe(recipe_id, recipe, image);
             return ResponseEntity.ok(Map.of("message", "更新成功"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -72,14 +70,10 @@ public class RecipeController {
 
     @DeleteMapping("/deleteRecipe/{recipe_id}")
     @Operation(summary = "刪除調酒")
-    public ResponseEntity<String> deleteRecipe(
-            @RequestHeader(value = "Authorization", required = false) String authorizationHeader,
-            @PathVariable Integer recipe_id) {
+    public ResponseEntity<String> deleteRecipe(@PathVariable Integer recipe_id) {
         try {
-            recipeService.deleteRecipe(recipe_id, extractToken(authorizationHeader));
+            recipeService.deleteRecipe(recipe_id);
             return ResponseEntity.ok("成功刪除酒譜");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("刪除失敗：" + e.getMessage());
         }
@@ -99,16 +93,5 @@ public class RecipeController {
     @Operation(summary = "搜尋功能")
     public ResponseEntity<List<Recipe>> searchRecipes(@RequestParam String keyword) {
         return ResponseEntity.ok(recipeService.searchRecipes(keyword));
-    }
-
-    /**
-     * @param authorizationHeader Authorization 標頭內容
-     * @return 去掉 Bearer 前綴的 token
-     */
-    private String extractToken(String authorizationHeader) {
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            throw new IllegalArgumentException("未提供有效的授權標頭");
-        }
-        return authorizationHeader.substring(7);
     }
 }

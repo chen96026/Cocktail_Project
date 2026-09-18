@@ -2,20 +2,11 @@
 
 /**
  * @param url     API 路徑
- * @param options fetch 選項，額外支援 auth（帶 Authorization 標頭）
+ * @param options fetch 選項
  * @returns 解析後的回應內容（JSON 或純文字）
  */
-export const request = async (url, {auth = false, headers = {}, ...options} = {}) => {
-    const finalHeaders = {...headers};
-    if (auth) {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            throw new Error("尚未登入");
-        }
-        finalHeaders.Authorization = `Bearer ${token}`;
-    }
-
-    const response = await fetch(url, {...options, headers: finalHeaders});
+export const request = async (url, options = {}) => {
+    const response = await fetch(url, options);
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }

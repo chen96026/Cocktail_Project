@@ -17,7 +17,7 @@ const toRecipeFormData = (recipe, image) => {
 };
 
 export const addRecipe = (recipe, image) =>
-    request("/lastwine/addRecipe", {method: "POST", auth: true, body: toRecipeFormData(recipe, image)});
+    request("/lastwine/addRecipe", {method: "POST", body: toRecipeFormData(recipe, image)});
 
 /**
  * @param recipe_id 酒譜 ID
@@ -25,11 +25,10 @@ export const addRecipe = (recipe, image) =>
 export const updatedRecipe = (recipe_id, recipe, image) =>
     request(`/lastwine/updateRecipe/${recipe_id}`, {
         method: "PUT",
-        auth: true,
         body: toRecipeFormData(recipe, image),
     });
 
 export const deletedRecipe = (recipe_id) =>
-    request(`/lastwine/deleteRecipe/${recipe_id}`, {method: "DELETE", auth: true});
+    request(`/lastwine/deleteRecipe/${recipe_id}`, {method: "DELETE"});
 
 export const findByRecipeId = (recipe_id) => request(`/lastwine/findRecipeId/${recipe_id}`);

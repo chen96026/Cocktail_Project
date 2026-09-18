@@ -1,6 +1,5 @@
 package com.example.cocktail.Model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -29,11 +28,6 @@ public class Recipe {
 
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Material> materials = new ArrayList<>();
-
-    @ManyToOne(fetch = FetchType.LAZY) // 多篇酒譜對一個會員
-    @JoinColumn(name = "member_id") // 外鍵關聯到Member
-    @JsonIgnore // 防止傳遞所有會員資訊
-    private Member member;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
@@ -81,14 +75,6 @@ public class Recipe {
 
     public void setImage(String image) {
         this.image = image;
-    }
-
-    public Member getMember() {
-        return member;
-    }
-
-    public void setMember(Member member) {
-        this.member = member;
     }
 
     public List<BaseWine> getBaseWines() {
