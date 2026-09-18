@@ -36,10 +36,20 @@ public class CombinationOptionService {
     }
 
     /**
-     * @param combinationOption 要建立的調酒與組合關聯
+     * 重新分配調酒與組合，先清掉舊的再建立新的
+     * 整批放在同一個交易，避免中途失敗留下「舊的刪了、新的沒進去」的狀態
+     *
+     * @param combinationOptions 要建立的調酒與組合關聯
      */
     @Transactional
-    public void assignCombination(CombinationOption combinationOption) {
+    public void assignCombinations(List<CombinationOption> combinationOptions) {
+        for (CombinationOption combinationOption : combinationOptions) {
+            removeCombination(combinationOption.getFkRecipeId().getRecipeId());
+            assignCombination(combinationOption);
+        }
+    }
+
+    private void assignCombination(CombinationOption combinationOption) {
         Integer recipeId = combinationOption.getFkRecipeId().getRecipeId();
         Integer combinationId = combinationOption.getFkCombinationId().getCombinationId();
 
@@ -54,11 +64,7 @@ public class CombinationOptionService {
         combinationOptionRepository.save(combinationOption);
     }
 
-    /**
-     * @param recipeId 要清除組合的酒譜 ID
-     */
-    @Transactional
-    public void removeCombination(Integer recipeId) {
+    private void removeCombination(Integer recipeId) {
         Recipe recipe = recipeRepository.findById(recipeId)
                 .orElseThrow(() -> new NotFoundException("找不到該酒譜: " + recipeId));
         combinationOptionRepository.deleteByFkRecipeId(recipe);

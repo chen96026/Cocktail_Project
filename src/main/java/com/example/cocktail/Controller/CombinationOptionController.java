@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,14 +33,7 @@ public class CombinationOptionController {
     @PostMapping("/assignCombinations")
     @Operation(summary = "後台分配調酒與組合")
     public ResponseEntity<Map<String, String>> assignAllCombinations(@RequestBody List<CombinationOption> combinationOptions) {
-        for (CombinationOption combinationOption : combinationOptions) {
-            // 刪除舊的組合
-            combinationOptionService.removeCombination(combinationOption.getFkRecipeId().getRecipeId());
-            // 新增新的組合
-            combinationOptionService.assignCombination(combinationOption);
-        }
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "所有組合分配成功");
-        return ResponseEntity.ok(response);
+        combinationOptionService.assignCombinations(combinationOptions);
+        return ResponseEntity.ok(Map.of("message", "所有組合分配成功"));
     }
 }

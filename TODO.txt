@@ -145,31 +145,9 @@ cocktail:
 # 其他已知待辦（依建議優先順序）
 ################################################################################
 
-[ ] 1. 三張背景圖是壞的 —— App.css / App.scss 的 url() 路徑全錯，10 分鐘可修
-
-       #background-bigSqare      url("/public/img/封面/調酒師.jpg")
-       #cocktail-background-img  url("../img/封面/調酒封面.jpg")
-       .basewine-background-img  url("../img/封面/基酒封面.jpg")
-
-       Vite 的 public/ 內容掛在根路徑，正確寫法是 /img/封面/xxx.jpg
-       另外 .anyPhoto .smalljpg / .smalljpg1 指向根本不存在的「琴酒製作.jpg」，
-       而且 class 在 JSX 裡也沒人用 → 整組刪掉
-
 [ ] 2. JDK 版本不一致 —— pom.xml 寫 java.version=21，這台筆電只有 JDK 17
        目前程式碼沒用到 Java 21 專屬語法，所以：裝 JDK 21 或把 pom 降成 17
        不處理的話 mvn spring-boot:run 會直接失敗
-
-[ ] 3. assignCombinations 沒有交易保護
-       CombinationOptionController 的迴圈是「先 remove 再 assign」，
-       Controller 層沒有 @Transactional（Service 的兩個方法是各自獨立交易），
-       中途失敗會留下「舊的刪了、新的沒進去」的半殘狀態
-       → 把整個迴圈搬進 Service 一個 @Transactional 方法
-
-[ ] 4. 圖片資產 42MB，全部進 git
-       調酒封面.jpg 7.4MB / 註冊登入封面.jpg 6.2MB / 伏特加.jpg 5.3MB
-       首頁輪播四張就 10MB 左右，手機第一次開很痛
-       - 註冊登入封面.jpg 已經沒用了（登入功能已移除）→ 直接刪
-       - 其餘壓到 1920px 寬、quality 80 或轉 WebP，42MB → 3MB 以內很合理
 
 [ ] 5. 沒有任何測試
        唯一的 contextLoads() 需要連 MySQL，實際跑不起來
@@ -209,3 +187,8 @@ cocktail:
 - 後台管理頁拆出組合表單與分配表格，基酒介紹文案搬到 constants
 - 修正 eslint 設定覆寫順序（原本 284 個錯誤全是設定造成的假警報）
 - API 欄位統一改為 camelCase，抽出調酒詳細彈窗與篩選器子元件
+- 整批分配組合改為單一交易（原本每筆 remove/assign 各自是獨立交易）
+- 圖片壓縮：42MB -> 4.1MB（長邊上限 1920px、quality 82），
+  刪除已無引用的 註冊登入封面.jpg
+- 修正 CSS 圖片路徑（/public/img 與 ../img 都是錯的，正確是 /img），
+  首頁篩選器、調酒列表、基酒介紹三塊背景圖本來是空白的

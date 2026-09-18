@@ -179,7 +179,7 @@ header {
   }
 
   #background-bigSqare {
-    background-image: url("/public/img/封面/調酒師.jpg");
+    background-image: url("/img/封面/調酒師.jpg");
     background-size: 100%;
     background-position: center;
     background-repeat: no-repeat;
@@ -357,60 +357,6 @@ header {
     font-size: 1.5vw;
     font-weight: 700;
   }
-
-  .anyPhoto {
-    border: 1px solid black;
-    margin: 3vh 7vw 3vh 7vw;
-    height: 50vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8vw;
-
-    .smalljpg {
-      // border: 2px solid black;
-      background-image: url("/public/img/封面/琴酒製作.jpg");
-      background-position: center;
-      background-size: cover;
-      background-color: rgba(0, 0, 0, 0.1);
-      background-blend-mode: darken;
-      width: 16vw;
-      height: 20vw;
-      border-radius: 15px;
-    }
-
-    .smalljpg1 {
-      // border: 2px solid black;
-      background-image: url("/public/img/封面/琴酒製作.jpg");
-      background-position: center;
-      background-size: cover;
-      background-color: rgba(0, 0, 0, 0.1);
-      background-blend-mode: darken;
-      width: 16vw;
-      height: 20vw;
-      border-radius: 15px;
-    }
-
-    .go_button {
-      border: none;
-      width: 8vw;
-      height: 6vh;
-      font-weight: 700;
-      font-size: 1vw;
-      background-color: rgba(255, 255, 255, 0.6);
-      position: relative;
-      left: 25%;
-      top: 40%;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
-    }
-
-    .go_button:hover {
-      background-color: rgba(0, 0, 0, 0.8);
-      color: #fff;
-    }
-  }
 }
 
 footer {
@@ -491,7 +437,7 @@ footer {
 
   #cocktail-background-img {
     border: 2px solid black;
-    background-image: url("../img/封面/調酒封面.jpg");
+    background-image: url("/img/封面/調酒封面.jpg");
     height: 75vh;
     width: 100%;
     background-size: cover;
@@ -625,7 +571,7 @@ footer {
 
   .basewine-background-img {
     border: 2px solid black;
-    background-image: url("../img/封面/基酒封面.jpg");
+    background-image: url("/img/封面/基酒封面.jpg");
     height: 75vh;
     width: 100%;
     background-size: cover;
