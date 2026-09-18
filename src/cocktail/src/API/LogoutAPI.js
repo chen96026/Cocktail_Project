@@ -1,4 +1,4 @@
-export const logoutMember = async (account) => {
+export const logoutMember = async () => {
     try {
         const response = await fetch(`/lastwine/logout`, {
             method: "POST",
@@ -8,7 +8,6 @@ export const logoutMember = async (account) => {
             throw new Error(`HTTP error status: ${response.status}`);
         }
         return await response.json();
-        return data;
     } catch (error) {
         console.error("錯誤: ", error);
         throw error;

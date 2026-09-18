@@ -14,7 +14,7 @@ const BaseWineText = () => {
             ],
             imagePath: "/img/基酒介紹/伏特加/伏特加.jpg",
         },
-        Brandy: {
+        brandy: {
             title: "Brandy 白蘭地",
             description: [
                 "白蘭地原文是「燒葡萄酒」的意思，但廣義而言凡是以水果酒為基底，再加以蒸餾製作而成的酒都算是白蘭地。",
@@ -36,7 +36,7 @@ const BaseWineText = () => {
             ],
             imagePath: "/img/基酒介紹/白蘭地/白蘭地.jpg",
         },
-        Gin: {
+        gin: {
             title: " Gin 琴酒",
             description: [
                 "也被稱為杜松子酒，以穀物(大麥或裸麥)作為原料，經由發酵與蒸餾後，再加上杜松子為主的多種香料調味。",
@@ -54,7 +54,7 @@ const BaseWineText = () => {
             ],
             imagePath: "/img/基酒介紹/琴酒/琴酒.jpg",
         },
-        Whisky: {
+        whisky: {
             title: " Whisky 威士忌",
             description: [
                 "跟白蘭地不同，威士忌主要是以發酵穀物為原料所製成的蒸餾酒，常見的原料有大麥、黑麥、小麥、玉米等。通常陳放於木桶中，因此「年紀」的計算也是從蒸餾至裝瓶所經過的時間。",
@@ -75,7 +75,7 @@ const BaseWineText = () => {
             ],
             imagePath: "/img/基酒介紹/威士忌/威士忌.jpg",
         },
-        Tequila: {
+        tequila: {
             title: "Tequila 龍舌蘭",
             description: [
                 "以其材料命名，使用龍舌蘭草的莖為原料而製成的蒸餾酒，是墨西哥原生的酒品。",
@@ -100,7 +100,7 @@ const BaseWineText = () => {
             ],
             imagePath: "/img/基酒介紹/龍舌蘭/龍舌蘭.jpg"
         },
-        Rum: {
+        rum: {
             title: "Rum 蘭姆酒",
             description: [
                 "蘭姆酒由甘蔗的副產品糖蜜，透過發酵和蒸餾製作而成，又可以稱為「糖酒」，從他的名字就可以想像，蘭姆酒通常都帶有醇厚的果香或甘蔗焦香，算是味道強烈、甜膩、又風味十足的酒款。",

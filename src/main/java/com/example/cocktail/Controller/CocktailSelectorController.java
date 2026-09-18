@@ -3,10 +3,7 @@ package com.example.cocktail.Controller;
 import com.example.cocktail.DTO.CockTailDetailDTO;
 import com.example.cocktail.DTO.CocktailBasicDTO;
 import com.example.cocktail.DTO.CocktailSelectorDTO;
-import com.example.cocktail.Repository.CombinationRepository;
 import com.example.cocktail.Service.CocktailSelectorService;
-import com.example.cocktail.Service.CombinationService;
-import com.example.cocktail.Service.RecipeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -24,8 +20,6 @@ public class CocktailSelectorController {
 
     @Autowired
     private CocktailSelectorService cocktailSelectorService;
-    @Autowired
-    private RecipeService recipeService;
 
     @PostMapping("/getCocktailSelector")
     @Operation(summary = "篩選器符合組合之調酒")

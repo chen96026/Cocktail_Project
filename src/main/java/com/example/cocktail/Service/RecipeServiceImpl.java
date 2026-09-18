@@ -1,6 +1,5 @@
 package com.example.cocktail.Service;
 
-import com.example.cocktail.DTO.CockTailDetailDTO;
 import com.example.cocktail.DTO.RecipeDTO;
 import com.example.cocktail.JwtUtil;
 import com.example.cocktail.Model.BaseWine;
@@ -8,17 +7,12 @@ import com.example.cocktail.Model.Material;
 import com.example.cocktail.Model.Member;
 import com.example.cocktail.Model.Recipe;
 import com.example.cocktail.Repository.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.cloudinary.AccessControlRule.AccessType.token;
 
 @Service
 public class RecipeServiceImpl implements RecipeService {
@@ -30,15 +24,11 @@ public class RecipeServiceImpl implements RecipeService {
     @Autowired
     private BaseWineRepository baseWineRepository;
     @Autowired
-    private MaterialRepository materialRepository;
-    @Autowired
     private JwtUtil jwtUtil;
     @Autowired
     private CloudinaryService cloudinaryService;
     @Autowired
     private MemberService memberService;
-    @Autowired
-    private CombinationRepository combinationRepository;
 
     @Override
     public List<RecipeDTO> getAllRecipes() {

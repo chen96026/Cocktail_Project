@@ -1,4 +1,4 @@
-import {useState, useEffect} from "react";
+import {useState} from "react";
 import {fetchWithAuth} from "../API/LoginAPI.js";
 import Swal from "sweetalert2";
 
@@ -80,10 +80,9 @@ const AddRecipeForm = () => {
             });
 
             if (!response.ok) {
-                const errorText = await response.text(); // 錯誤時解析文字
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            const result = await response.json();
+            await response.json();
             Swal.fire({
                 title: "上傳成功",
                 icon: "success",

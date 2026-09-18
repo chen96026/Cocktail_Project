@@ -1,8 +1,6 @@
 package com.example.cocktail.Service;
 
-import com.example.cocktail.DTO.CockTailDetailDTO;
 import com.example.cocktail.DTO.RecipeDTO;
-import com.example.cocktail.Model.Material;
 import com.example.cocktail.Model.Recipe;
 import org.springframework.web.multipart.MultipartFile;
 

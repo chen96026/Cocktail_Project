@@ -1,6 +1,5 @@
 package com.example.cocktail.Repository;
 
-import com.example.cocktail.Model.CombinationOption;
 import com.example.cocktail.Model.Recipe;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -9,9 +8,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
-
-    // 找尋會員的酒譜
-    public List<Recipe> findByMemberAccount(String account);
 
     // 找到所有有包含基酒的酒譜(全部的酒譜)
     @Query("SELECT r FROM Recipe r JOIN FETCH r.baseWines")

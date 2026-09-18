@@ -9,8 +9,6 @@ import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class MemberServiceImpl implements MemberService {
 
@@ -61,11 +59,6 @@ public class MemberServiceImpl implements MemberService {
         memberdto.setAccount(member.getAccount());
         memberdto.setRole(member.getRole());
         return memberdto; // 確保返回用戶對象
-    }
-
-    @Override
-    public Optional<Member> findMemberByAccount(String account) {
-        return Optional.ofNullable(memberRepository.findByAccount(account));
     }
 
     @Override

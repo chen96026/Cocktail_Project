@@ -1,22 +1,3 @@
-export const addRecipe = async (formData) => {
-    try {
-        const response = await fetch(`/lastwine/addRecipe`, {
-            method: 'POST',
-            headers: {
-                'Authorization': 'Bearer <your-token>',
-            },
-            body: formData,
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! status:${response.status}`);
-        }
-        return await response.json();
-    } catch (error) {
-        console.log("錯誤: ", error)
-        throw error;
-    }
-}
-
 export const updatedRecipe = async (recipe_id, updatedData) => {
     try {
         // 從 localStorage 獲取 Token
@@ -55,7 +36,6 @@ export const deletedRecipe = async (recipe_id) => {
             },
         });
         if (!response.ok) {
-            const errorResponse = await response.text(); // 解析錯誤訊息
             throw new Error(`HTTP error! status:${response.status}`)
         }
         return await response.text();
