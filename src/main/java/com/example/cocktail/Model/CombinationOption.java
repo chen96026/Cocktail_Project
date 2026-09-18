@@ -11,11 +11,11 @@ public class CombinationOption {
     @Column(name="option_id")
     private int optionId;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="fk_recipe_id",referencedColumnName = "recipe_id")
     private Recipe fkRecipeId;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="fk_combination_id", referencedColumnName = "combination_id")
     private Combinations fkCombinationId;
 

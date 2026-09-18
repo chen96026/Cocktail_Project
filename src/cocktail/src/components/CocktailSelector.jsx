@@ -48,7 +48,6 @@ const CocktailSelector = ({
             //打取得選擇的調酒的API
             const cocktails = await getCocktailSelector(selector);
             Swal.close();
-            console.log("返回的調酒數據: ", cocktails);
             if (cocktails.length > 0) {
                 setResult(cocktails[0]);
                 //隱藏選擇表單
@@ -94,7 +93,6 @@ const CocktailSelector = ({
             //打取得詳細資料的API
             const detail = await getCocktailDetail(recipeId);
             Swal.close();
-            console.log("詳細的回應數據:", detail)
             setModalData(detail);
             setIsModalOpen(true);
         } catch (error) {

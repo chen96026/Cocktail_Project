@@ -105,10 +105,9 @@ public class RecipeService {
      * @param recipe_id 酒譜 ID
      */
     public void deleteRecipe(Integer recipe_id) {
-        if (!recipeRepository.existsById(recipe_id)) {
-            throw new RuntimeException("找不到該酒譜！");
-        }
-        recipeRepository.deleteById(recipe_id);
+        Recipe recipe = recipeRepository.findById(recipe_id)
+                .orElseThrow(() -> new RuntimeException("找不到該酒譜！"));
+        recipeRepository.delete(recipe);
     }
 
     /**

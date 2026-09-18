@@ -2,9 +2,6 @@ package com.example.cocktail.Model;
 
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Table(name = "combinations", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"mood", "taste", "tone", "drunk"})

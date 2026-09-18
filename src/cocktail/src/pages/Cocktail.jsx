@@ -31,8 +31,9 @@ const CocktailsPage = () => {
     };
 
     useEffect(() => {
-        loadMoreCocktails(); // 確保 filters 更新後再觸發 API
-
+        // 搜尋框每打一個字就打一次 API 太吵，等使用者停 300ms 再送
+        const timer = setTimeout(loadMoreCocktails, 300);
+        return () => clearTimeout(timer);
     }, [filters, searchQuery]);
 
     return (

@@ -54,10 +54,9 @@ const CocktailList = ({cocktails}) => {
 
     return (
         <section id="cocktaillistSection">
-            {cocktails.map((cocktail, index) => (
-                // 用英文名稱+index作為key
-                <div id="cocktaillistDiv" key={`${cocktail.entitle}-${index}`}>
-                    <img id="cocktaillistImg" src={cocktail.image} alt={cocktail.enTitle}/>
+            {cocktails.map((cocktail) => (
+                <div id="cocktaillistDiv" key={cocktail.recipe_id}>
+                    <img id="cocktaillistImg" src={cocktail.image} alt={cocktail.en_title}/>
                     <p id="cocktaillistp"
                        onClick={() => openModal(cocktail)}>{cocktail.en_title} ({cocktail.zh_title})
                     </p>
