@@ -1,44 +1,22 @@
-export const findRecipeByBaseWine = async(baseWines)=>{
-    try{
-        const response = await fetch (`/lastwine/getRecipesByBaseWine?baseWine=${encodeURIComponent(baseWines.join(","))}`,{
-            method:'GET',
-            headers:{'Content-Type':'application/json'},
-        });
-        if(!response.ok){
-            throw new Error("error")
-        }
-        return await response.json();
-    }catch (error){
-        console.log("錯誤: ", error);
-        throw error;
-    }
-}
+import {request} from "./request.js";
+
+/**
+ * @param baseWines 基酒名稱陣列
+ */
+export const findRecipeByBaseWine = (baseWines) =>
+    request(`/lastwine/getRecipesByBaseWine?baseWine=${encodeURIComponent(baseWines.join(","))}`);
 
 export const findAllRecipe = async () => {
-    try {
-        const response = await fetch(`/lastwine/getAllRecipe`, {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        if (!Array.isArray(data)) {
-            console.error("後端回傳錯誤，不是陣列");
-            return [];
-        }
-        return data;
-    } catch (error) {
-        console.error("錯誤: ", error);
-        throw error;
+    const data = await request("/lastwine/getAllRecipe");
+    if (!Array.isArray(data)) {
+        console.error("後端回傳錯誤，不是陣列");
+        return [];
     }
+    return data;
 };
 
-export const searchRecipeByKeyword = async (keyword) => {
-    const response = await fetch(`/lastwine/search?keyword=${encodeURIComponent(keyword)}`);
-    if (!response.ok) {
-        throw new Error("搜尋失敗");
-    }
-    return response.json();
-};
+/**
+ * @param keyword 中英文名稱關鍵字
+ */
+export const searchRecipeByKeyword = (keyword) =>
+    request(`/lastwine/search?keyword=${encodeURIComponent(keyword)}`);

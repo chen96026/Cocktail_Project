@@ -1,11 +1,11 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import Swal from "sweetalert2";
 import {logoutMember} from "../API/LogoutAPI.js";
-import { useNavigate } from "react-router-dom";
+import {useAuth} from "../context/authContext.js";
 
-const Header = ({ isLogin, onLogout, userRole}) => {
+const Header = () => {
   const navigate = useNavigate();
+  const {isLogin, role, logout} = useAuth();
 
   const handleOutalert = () => {
     Swal.fire({
@@ -18,8 +18,8 @@ const Header = ({ isLogin, onLogout, userRole}) => {
     .then(async (result) => {
       if (result.isConfirmed) {
         try{
-          const response = await logoutMember();
-          await onLogout();
+          await logoutMember();
+          logout();
           Swal.fire({
             title:"登出成功",
             icon:"success",
@@ -52,7 +52,7 @@ const Header = ({ isLogin, onLogout, userRole}) => {
           <div>
             <Link to="/AddRecipeForm"><i className="fa-solid fa-book"></i> Wine Recipe</Link>
           </div>
-          {isLogin && userRole === "ADMIN" && (
+          {isLogin && role === "ADMIN" && (
               <div>
                 <Link to="/Admin"><i className="fa-solid fa-user-shield"></i> Admin</Link>
               </div>

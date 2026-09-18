@@ -6,7 +6,6 @@ import com.example.cocktail.DTO.CocktailSelectorDTO;
 import com.example.cocktail.Service.CocktailSelectorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +17,11 @@ import java.util.List;
 @Tag(name = "CocktailSelector", description = "API")
 public class CocktailSelectorController {
 
-    @Autowired
-    private CocktailSelectorService cocktailSelectorService;
+    private final CocktailSelectorService cocktailSelectorService;
+
+    public CocktailSelectorController(CocktailSelectorService cocktailSelectorService) {
+        this.cocktailSelectorService = cocktailSelectorService;
+    }
 
     @PostMapping("/getCocktailSelector")
     @Operation(summary = "篩選器符合組合之調酒")

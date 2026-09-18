@@ -849,6 +849,9 @@ footer #backgroundslogan {
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 #RecipeContent .material-input {
+  display: flex;
+  gap: 0.5vw;
+  align-items: center;
   margin-bottom: 1.5vh;
 }
 #RecipeContent .materialsRemoveButton {

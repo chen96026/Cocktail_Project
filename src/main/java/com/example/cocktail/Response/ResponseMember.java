@@ -1,44 +1,17 @@
 package com.example.cocktail.Response;
 
 import com.example.cocktail.DTO.MemberDTO;
-import com.example.cocktail.Model.Member;
 
-public class ResponseMember {
+/**
+ * 註冊／登入／登出的回應內容
+ */
+public record ResponseMember(String mesg, MemberDTO member, String token, String role) {
 
-    private String mesg;
-    private MemberDTO member;
-    private String token;
-    private String role;
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public MemberDTO getMember() {
-        return member;
-    }
-
-    public void setMember(MemberDTO member) {
-        this.member = member;
-    }
-
-    public String getMesg() {
-        return mesg;
-    }
-
-    public void setMesg(String mesg) {
-        this.mesg = mesg;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
+    /**
+     * @param mesg 回應訊息
+     * @return 只帶訊息、不含會員資料與 token 的回應
+     */
+    public static ResponseMember message(String mesg) {
+        return new ResponseMember(mesg, null, null, null);
     }
 }

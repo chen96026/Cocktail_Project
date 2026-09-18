@@ -978,6 +978,9 @@ footer {
   }
 
   .material-input {
+    display: flex;
+    gap: 0.5vw;
+    align-items: center;
     margin-bottom: 1.5vh;
   }
 

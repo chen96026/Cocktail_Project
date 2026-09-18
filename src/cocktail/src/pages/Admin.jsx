@@ -5,6 +5,7 @@ import {
     getAllRecipeCombinations,
     assignCombinations,
 } from "../API/Admin.js";
+import {DRUNK_OPTIONS, MOOD_OPTIONS, TASTE_OPTIONS, TONE_OPTIONS} from "../constants/options.js";
 
 const Admin = () => {
     const [recipes, setRecipes] = useState([]); // 調酒主表格數據
@@ -126,10 +127,6 @@ const Admin = () => {
         GetAllRecipeCombinations(); // 獲取所有調酒與組合
     }, []);
 
-    useEffect(() => {
-        console.log("獲取的調酒數據: ", recipes); // 檢查 recipes 結構
-    }, [recipes]);
-
     return (
         <div className="admin-page">
             <h1 className="admin-pageH1">後台管理系統</h1>
@@ -158,10 +155,9 @@ const Admin = () => {
                             <option value="" disabled>
                                 選擇心情
                             </option>
-                            <option value="愉悅">愉悅</option>
-                            <option value="普通">普通</option>
-                            <option value="煩悶">煩悶</option>
-                            <option value="沉重">沉重</option>
+                            {MOOD_OPTIONS.map((option) => (
+                                <option key={option.value} value={option.value}>{option.label}</option>
+                            ))}
                         </select>
                     </div>
                     <div>
@@ -176,9 +172,9 @@ const Admin = () => {
                             <option value="" disabled>
                                 選擇味道
                             </option>
-                            <option value="酸">酸</option>
-                            <option value="甜">甜</option>
-                            <option value="苦">苦</option>
+                            {TASTE_OPTIONS.map((option) => (
+                                <option key={option.value} value={option.value}>{option.label}</option>
+                            ))}
                         </select>
                     </div>
                     <div>
@@ -193,8 +189,9 @@ const Admin = () => {
                             <option value="" disabled>
                                 選擇色調
                             </option>
-                            <option value="冷">冷</option>
-                            <option value="暖">暖</option>
+                            {TONE_OPTIONS.map((option) => (
+                                <option key={option.value} value={option.value}>{option.label}</option>
+                            ))}
                         </select>
                     </div>
                     <div>
@@ -209,8 +206,9 @@ const Admin = () => {
                             <option value="" disabled>
                                 選擇醉相
                             </option>
-                            <option value="微酣">微酣</option>
-                            <option value="酩酊大醉">酩酊大醉</option>
+                            {DRUNK_OPTIONS.map((option) => (
+                                <option key={option.value} value={option.value}>{option.label}</option>
+                            ))}
                         </select>
                     </div>
                     </section>

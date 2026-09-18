@@ -1,64 +1,35 @@
-export const updatedRecipe = async (recipe_id, updatedData) => {
-    try {
-        // 從 localStorage 獲取 Token
-        const token = localStorage.getItem("token");
-        if (!token) {
-            throw new Error("尚未登入");
-        }
-        const response = await fetch(`/lastwine/updateRecipe/${recipe_id}`, {
-            method: 'PUT',
-            headers: {
-                Authorization: `Bearer ${token}` // 添加 Authorization 標頭
-            },
-            body: updatedData
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! status:${response.status}`);
-        }
-        return await response.json();
-    } catch (error) {
-        console.log("錯誤: ", error)
-        throw error;
+import {request} from "./request.js";
+
+/**
+ * 組出 addRecipe / updateRecipe 需要的 multipart 內容
+ * recipe part 走 JSON，圖片另走 image part
+ *
+ * @param recipe 酒譜內容（enTitle / zhTitle / method / baseWines / materials）
+ * @param image  圖片檔，未選擇則不帶
+ */
+const toRecipeFormData = (recipe, image) => {
+    const formData = new FormData();
+    formData.append("recipe", new Blob([JSON.stringify(recipe)], {type: "application/json"}));
+    if (image) {
+        formData.append("image", image);
     }
-}
+    return formData;
+};
 
-export const deletedRecipe = async (recipe_id) => {
-    try {
-        // 從 localStorage 獲取 Token
-        const token = localStorage.getItem("token");
-        if (!token) {
-            throw new Error("未登入或授權 Token 丟失");
-        }
-        const response = await fetch(`/lastwine/deleteRecipe/${recipe_id}`, {
-            method: 'DELETE',
-            headers: {
-                Authorization: `Bearer ${token}`, // 添加 Authorization 標頭
-            },
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! status:${response.status}`)
-        }
-        return await response.text();
-    } catch (error) {
-        console.log("刪除酒譜失敗：", error.message);
-        throw error;
-    }
-}
+export const addRecipe = (recipe, image) =>
+    request("/lastwine/addRecipe", {method: "POST", auth: true, body: toRecipeFormData(recipe, image)});
 
-export const findByRecipeId = async (recipe_id) => {
-    try {
-        const response = await fetch(`/lastwine/findRecipeId/${recipe_id}`, {
-            method: 'GET',
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! status:${response.status}`)
-        }
-        return await response.json();
-    } catch (error) {
-        console.log("錯誤: ", error);
-        throw error;
-    }
-}
+/**
+ * @param recipe_id 酒譜 ID
+ */
+export const updatedRecipe = (recipe_id, recipe, image) =>
+    request(`/lastwine/updateRecipe/${recipe_id}`, {
+        method: "PUT",
+        auth: true,
+        body: toRecipeFormData(recipe, image),
+    });
 
+export const deletedRecipe = (recipe_id) =>
+    request(`/lastwine/deleteRecipe/${recipe_id}`, {method: "DELETE", auth: true});
 
-
+export const findByRecipeId = (recipe_id) => request(`/lastwine/findRecipeId/${recipe_id}`);

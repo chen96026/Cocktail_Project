@@ -20,9 +20,7 @@ const CocktailsPage = () => {
             else if (filters.length === 0 || filters.includes("All")) {
                 data = await findAllRecipe(); // 全部酒譜
             } else {
-                const baseWines = filters; // 直接使用 filters 陣列
-                const size = filters.length; // 基酒數量
-                data = await findRecipeByBaseWine(baseWines, size);
+                data = await findRecipeByBaseWine(filters);
             }
             setCocktails(data); // 更新酒譜列表
         } catch (error) {
