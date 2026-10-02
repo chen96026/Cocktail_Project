@@ -8,15 +8,6 @@ import {
 import CombinationForm from "../components/CombinationForm.jsx";
 import RecipeCombinationTable from "../components/RecipeCombinationTable.jsx";
 
-// 同樣的四維度組合只留一筆
-const distinctCombinations = (data) => data.filter(
-    (comb, index, self) =>
-        index === self.findIndex(
-            (c) => c.mood === comb.mood && c.taste === comb.taste
-                && c.tone === comb.tone && c.drunk === comb.drunk
-        )
-);
-
 const Admin = () => {
     const [recipes, setRecipes] = useState([]); // 調酒主表格數據
     const [combinations, setCombinations] = useState([]);
@@ -26,7 +17,8 @@ const Admin = () => {
 
     const loadCombinations = useCallback(async () => {
         try {
-            setCombinations(distinctCombinations(await getAllTheCombinations()));
+            // DB 對四個欄位有 unique constraint，不會有重複的組合
+            setCombinations(await getAllTheCombinations());
         } catch (err) {
             console.error("獲取所有組合失敗: ", err);
             setError(`無法獲取組合數據：${err.message}`);
