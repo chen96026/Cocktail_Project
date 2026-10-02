@@ -170,12 +170,6 @@ ddl-auto=update 會幫 recipe 加欄位，但不會搬資料。建議在新版�
        datasource 已拆成預設（H2）/ mysql 兩個 profile
        剩 show-sql=true、Swagger 永遠開著，可以再拆 local / prod
 
-[ ] 11. 新增組合沒檢查空值：POST /lastwine/combinations 送 {} 會建出四個欄位都是 null 的組合
-
-[ ] 12. 組合列表、後台對照表的查詢沒有 ORDER BY，順序靠資料庫決定
-
-[ ] 13. Admin 新增組合失敗時表單照樣被清空（handleAddCombination 把錯誤吞掉，CombinationForm 不知道失敗）
-
 [ ] 14. Cloudinary 孤兒圖（量小可接受）
        重名已在上傳前擋掉，但上傳後才存檔失敗（例如兩邊同時新增同名、DB 出錯）時圖片仍留在雲端；
        addRecipe 在交易裡上傳，上傳期間會佔著一條 DB 連線
@@ -213,8 +207,13 @@ ddl-auto=update 會幫 recipe 加欄位，但不會搬資料。建議在新版�
 
 - 請求參數或內容格式錯誤（漏帶參數或 multipart part、JSON 壞掉、型別錯）改回 400，不再落到 500（原待辦 9）
 - Spring Boot 3.4.0 → 3.5.16、springdoc 2.8.14 → 2.9.1（swagger-ui 5.32.14，含 2.9 的 CVE 修補）（原待辦 10）
+- 新增組合四個欄位不得空白（原待辦 11）；組合列表與後台對照表依 ID 固定排序（原待辦 12）
+- 零碎清理：移除重複的 jdbc starter、deprecated 的 MySQL8Dialect 設定、與 findById 重複的 findByRecipeId，
+  CloudinaryService 改建構子注入；錯誤 log 改記英文說明（例外同時帶回給前端的中文訊息與 log 用的英文）
 
 前端
+- 後台新增組合失敗時保留表單內容（原待辦 13）；移除組合列表多餘的去重與列表 API 不會發生的非陣列防呆，
+  刪除登入功能殘留的 key.png / person.png
 - 刪除酒譜後卡片立即從列表移除（原本會留在畫面上，再按一次刪除就 404）
 - 新增表單重置時清空已選圖片，送出前要求至少勾一種基酒
 - 修正首頁輪播在背景分頁停留後切回來變空白
