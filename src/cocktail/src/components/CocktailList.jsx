@@ -4,7 +4,13 @@ import Swal from "sweetalert2";
 import RecipeDetailModal from "./RecipeDetailModal.jsx";
 import {deletedRecipe} from "../API/RecipeAPI";
 
-const CocktailList = ({cocktails}) => {
+/**
+ * 調酒列表
+ *
+ * @param cocktails 要顯示的調酒
+ * @param onDeleted 刪除成功後觸發，接到 recipeId，由父層把那杯從列表拿掉
+ */
+const CocktailList = ({cocktails, onDeleted}) => {
     const [selectedCocktail, setSelectedCocktail] = useState(null);
     const navigate = useNavigate();
 
@@ -25,6 +31,7 @@ const CocktailList = ({cocktails}) => {
         if (result.isConfirmed) {
             try {
                 await deletedRecipe(recipeId);
+                onDeleted(recipeId);
                 Swal.fire({
                     icon: "success",
                     title: "刪除成功",

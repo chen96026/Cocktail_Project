@@ -36,6 +36,11 @@ const CocktailsPage = () => {
         return () => clearTimeout(timer);
     }, [loadMoreCocktails]);
 
+    // 刪除成功後直接從目前列表拿掉那杯，不必重打 API
+    const handleDeleted = (recipeId) => {
+        setCocktails((prev) => prev.filter((cocktail) => cocktail.recipeId !== recipeId));
+    };
+
     return (
         <section id="cocktailSection">
             <section id="cocktail-background-img"></section>
@@ -59,7 +64,7 @@ const CocktailsPage = () => {
                     {loading ? (
                         <p>載入中...</p>
                     ) : (
-                        <CocktailList cocktails={cocktails}/>
+                        <CocktailList cocktails={cocktails} onDeleted={handleDeleted}/>
                     )}
                 </div>
             </section>
