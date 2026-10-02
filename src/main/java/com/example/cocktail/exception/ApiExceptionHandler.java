@@ -4,10 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /**
@@ -66,6 +70,50 @@ public class ApiExceptionHandler {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
                 .headers(e.getHeaders())
                 .body(new ApiError("此 API 路徑不支援 " + e.getMethod() + " 方法"));
+    }
+
+    /**
+     * @param e 漏帶必要的 query 參數
+     * @return 400 與缺少的參數名稱
+     */
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ApiError> handleMissingParameter(MissingServletRequestParameterException e) {
+        log.warn("Missing request parameter: {}", e.getParameterName());
+        return ResponseEntity.badRequest().body(new ApiError("缺少必要參數：" + e.getParameterName()));
+    }
+
+    /**
+     * @param e multipart 漏帶必要的 part，例如新增酒譜沒附圖片
+     * @return 400 與缺少的欄位名稱
+     */
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public ResponseEntity<ApiError> handleMissingPart(MissingServletRequestPartException e) {
+        log.warn("Missing request part: {}", e.getRequestPartName());
+        return ResponseEntity.badRequest().body(new ApiError("缺少必要欄位：" + e.getRequestPartName()));
+    }
+
+    /**
+     * 路徑或 query 參數轉型失敗，例如 /recipes/abc
+     *
+     * @param e 參數型別不符的例外
+     * @return 400 與格式錯誤的參數名稱
+     */
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiError> handleTypeMismatch(MethodArgumentTypeMismatchException e) {
+        log.warn("Request parameter type mismatch: {}={}", e.getName(), sanitize(String.valueOf(e.getValue())));
+        return ResponseEntity.badRequest().body(new ApiError("參數 " + e.getName() + " 格式錯誤"));
+    }
+
+    /**
+     * JSON 壞掉或欄位型別不符，parser 的細節只寫 log，不回給前端
+     *
+     * @param e 請求內容無法解析的例外
+     * @return 400 與錯誤訊息
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiError> handleNotReadable(HttpMessageNotReadableException e) {
+        log.warn("Malformed request body: {}", sanitize(e.getMostSpecificCause().getMessage()));
+        return ResponseEntity.badRequest().body(new ApiError("請求內容格式錯誤"));
     }
 
     /**
