@@ -81,6 +81,68 @@ cocktail:
 - 不建議改 H2 檔案模式（jdbc:h2:file:...），.mv.db 是二進位檔，版本控管難看且無法 merge
 
 
+## API 路徑（2026-10-02 改為 REST 風格，前綴 /lastwine 給 vite proxy 用）
+
+  GET    /lastwine/recipes?baseWine=Gin,Rum&keyword=琴   酒譜列表；基酒要全部符合、關鍵字比對中英文名稱，
+                                                          兩者取交集；不帶或 baseWine=All 為全部
+  GET    /lastwine/recipes/{id}                          單一酒譜
+  GET    /lastwine/recipes/{id}/detail                   詳細頁（含四維度組合）
+  POST   /lastwine/recipes                               新增（multipart：recipe JSON + image）
+  PUT    /lastwine/recipes/{id}                          更新（multipart，image 可省略）
+  DELETE /lastwine/recipes/{id}                          刪除
+  GET    /lastwine/selector?mood=&taste=&tone=&drunk=    四維度篩選器
+  GET    /lastwine/combinations                          組合列表
+  POST   /lastwine/combinations                          新增組合
+  GET    /lastwine/recipe-combinations                   後台：酒譜與組合對照表
+  PUT    /lastwine/recipe-combinations                   後台：整批分配組合
+  Swagger：/swagger-ui/index.html
+
+
+################################################################################
+# 家裡那台 MySQL 的資料搬移（mysql profile 才需要，H2 不用）
+################################################################################
+
+2026-10-02 起，酒譜與組合的對應從 combination_option 中介表改成 recipe.combination_id。
+ddl-auto=update 會幫 recipe 加欄位，但不會搬資料。建議在新版「啟動前」做：
+
+[ ] 0. 備份：mysqldump -u <USER> -p cocktail > cocktail-before-migration.sql
+
+[ ] 1. 檢查有沒有一杯酒對到多組（理論上 0 筆；有的話下面取 option_id 最大＝最後一次分配的）
+       SELECT fk_recipe_id, COUNT(*) cnt FROM combination_option
+       GROUP BY fk_recipe_id HAVING COUNT(*) > 1;
+
+[ ] 2. 加欄位（型別先用 SHOW CREATE TABLE combinations; 確認，要跟 combinations.combination_id 一樣，
+       UNSIGNED 也要照抄，不然 FK 建不起來）
+       ALTER TABLE recipe ADD COLUMN combination_id INT NULL;
+
+[ ] 3. 搬資料
+       START TRANSACTION;
+       UPDATE recipe r
+       JOIN combination_option co ON co.fk_recipe_id = r.recipe_id
+       JOIN (SELECT fk_recipe_id, MAX(option_id) option_id
+             FROM combination_option GROUP BY fk_recipe_id) latest
+         ON latest.option_id = co.option_id
+       SET r.combination_id = co.fk_combination_id;
+       -- 第 4 步檢查都 OK 再 COMMIT，否則 ROLLBACK
+       COMMIT;
+
+[ ] 4. 檢查
+       -- 兩個數字要相同
+       SELECT COUNT(DISTINCT fk_recipe_id) FROM combination_option WHERE fk_combination_id IS NOT NULL;
+       SELECT COUNT(*) FROM recipe WHERE combination_id IS NOT NULL;
+       -- 指到不存在組合的資料要 0 筆（不然 Hibernate 加 FK 會失敗）
+       SELECT r.recipe_id FROM recipe r LEFT JOIN combinations c ON c.combination_id = r.combination_id
+       WHERE r.combination_id IS NOT NULL AND c.combination_id IS NULL;
+
+[ ] 5. 用 mysql profile 啟動新版：log 沒有 DDL 錯誤、SHOW CREATE TABLE recipe; 有 combination_id → combinations 的 FK，
+       畫面上篩選器、詳細頁、Admin 都正常
+
+[ ] 6. 確認沒問題、備份留好之後 DROP TABLE combination_option;
+       （留著不會壞事，但已經是不會再更新的死資料）
+
+另一種做法：先啟動讓 Hibernate 自己加欄位和 FK，再跑 1、3、4（跳過 2）。
+缺點是啟動到跑完 UPDATE 之間，篩選器查不到任何酒。
+
 ################################################################################
 # 其他已知待辦（依建議優先順序）
 ################################################################################
@@ -88,14 +150,11 @@ cocktail:
 [ ] 2. JDK 版本 —— 決定維持 java.version=21
        這台筆電系統 JDK 是 17，mvn 需要指定 JDK 21 才能跑：
        裝 JDK 21，或直接用 IntelliJ 內建的 JetBrains Runtime 21（JAVA_HOME 指過去即可）
+       IntelliJ 拉下 2026-10-02 這批 commit 後要 Rebuild 一次（package 改名、刪了 CombinationOption，
+       target/ 裡的舊 class 會被當成 Entity 掃進去）
 
-[ ] 5. 測試補齊
-       已有：contextLoads（改用 H2 後不用 MySQL 就能跑）、DataSeederTest、RecipeServiceTest
-       還缺：@WebMvcTest + MockMvc 測 controller 層
-       重點涵蓋：新增酒譜的 multipart JSON part 綁定、404 行為、篩選器參數
-
-[ ] 6. Entity 的 getter/setter 樣板約 200 行
-       Recipe / Combinations / Material / BaseWine 四支，扣掉欄位宣告幾乎都是樣板
+[ ] 6. Entity 的 getter/setter 樣板
+       Recipe / Combination / Material / BaseWine 四支，扣掉欄位宣告幾乎都是樣板
        Entity 不能用 record（JPA 要無參建構子 + 可變），只能靠 Lombok @Getter @Setter
        → 需要新增 dependency，先確認
 
@@ -111,16 +170,58 @@ cocktail:
        datasource 已拆成預設（H2）/ mysql 兩個 profile
        剩 show-sql=true、Swagger 永遠開著，可以再拆 local / prod
 
+[ ] 9. 請求格式錯誤回 500，應該回 400（ApiExceptionHandler）
+       漏帶必要參數（MissingServletRequestParameterException）、JSON 壞掉或型別錯
+       （HttpMessageNotReadableException）、路徑參數型別錯如 /recipes/abc
+       （MethodArgumentTypeMismatchException）都落到最後的 catch-all
+       （404 找不到路徑、405 方法不對已經處理）
+
+[ ] 10. Spring Boot 3.4.0 偏舊
+       springdoc 停在 2.8.14：2.8.15 以後是用 Boot 3.5 build 的，在 3.4.0 上整個 app 起不來
+       springdoc 2.9 有修一批 CVE（swagger-ui 升到 5.32.5），要先升 Boot 到 3.5.x 才拿得到
+       → 依賴升級，先確認
+
+[ ] 11. 新增組合沒檢查空值：POST /lastwine/combinations 送 {} 會建出四個欄位都是 null 的組合
+
+[ ] 12. 組合列表、後台對照表的查詢沒有 ORDER BY，順序靠資料庫決定
+
+[ ] 13. Admin 新增組合失敗時表單照樣被清空（handleAddCombination 把錯誤吞掉，CombinationForm 不知道失敗）
+
+[ ] 14. Cloudinary 孤兒圖（量小可接受）
+       重名已在上傳前擋掉，但上傳後才存檔失敗（例如兩邊同時新增同名、DB 出錯）時圖片仍留在雲端；
+       addRecipe 在交易裡上傳，上傳期間會佔著一條 DB 連線
+
+[ ] 15. 資安（目前先略過）：application.properties 的 Cloudinary api_key / api_secret 是明文且已進 git
+       → 改用環境變數，並到 Cloudinary 換一組 key
+
 
 ################################################################################
 # 已完成（2026-10-02）
 ################################################################################
 
-- 資料改由 seed-data.yaml + H2 記憶體資料庫提供，不用連 MySQL 也能啟動，
-  MySQL 設定移到 mysql profile
-- 修正刪除酒譜在 H2 上撞 FK 的錯誤：combination_option 補 @OnDelete(CASCADE)，
-  與 MySQL 既有 FK 的 ON DELETE CASCADE 一致
-- 新增 DataSeederTest、RecipeServiceTest
+主線與測試
+- 資料改由 seed-data.yaml + H2 記憶體資料庫提供，不用連 MySQL 也能啟動，MySQL 設定移到 mysql profile
+- 測試從只有一個連不上 MySQL 的 contextLoads 補到 26 個（含 MockMvc 端點測試，原待辦 5）
+
+後端
+- springdoc 2.2.0 → 2.8.14，Swagger 本來整個打不開（NoSuchMethodError）
+- 列表改用 findAll + hibernate.default_batch_fetch_size：沒勾基酒的酒譜不再從「All」消失，
+  getAllRecipe 49 條 SQL → 3 條
+- RecipeService 補交易邊界（全面改用 Spring @Transactional），新增／編輯重名回 400 且在上傳圖片前擋下
+- Controller 一律收送 DTO，同一份酒譜只剩一種 JSON 形狀，關閉 OSIV
+- 酒譜與組合改為 Recipe 多對一關聯，移除 combination_option 中介表（mysql 資料搬移見上方）；
+  材料加 @OrderBy 固定順序
+- package 改小寫、設定類別收進 config，CockTailDetailDTO / Combinations 類別改名（DB table 名稱不變）
+- API 改為 REST 風格，列表合併基酒與關鍵字查詢（順便修掉搜尋時忽略已勾基酒），舊路徑回 404
+
+前端
+- 刪除酒譜後卡片立即從列表移除（原本會留在畫面上，再按一次刪除就 404）
+- 新增表單重置時清空已選圖片，送出前要求至少勾一種基酒
+- 修正首頁輪播在背景分頁停留後切回來變空白
+- 錯誤提示改為顯示後端回傳的訊息（原本只顯示 HTTP error! status: 400）
+- 圖片改用 Cloudinary 縮圖（c_limit,w_xxx,f_auto,q_auto）+ lazy loading，列表不再下載原圖
+- 修正調酒頁內外層共用同一個 id 造成樣式互相套用，篩選器點文字也能勾選
+- 刪除與 App.css 重複且沒被引用的 App.scss
 
 
 ################################################################################
