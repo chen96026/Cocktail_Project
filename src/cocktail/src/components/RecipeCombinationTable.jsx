@@ -1,15 +1,30 @@
+import {combinationOwners} from "../utils/combinationOwners.js";
+
 /**
  * 後台的調酒與組合對應表格
+ * 被別杯占用的組合照樣可以選（才能互換），但會標出目前是哪一杯在用
  *
  * @param recipes      調酒與目前組合
  * @param combinations 可選的四維度組合
+ * @param assignments  尚未送出的分配，[{recipeId, combinationId}]
  * @param onAssign     選擇組合時觸發，接到 (recipeId, combinationId)
  * @param onSubmit     按下確定分配時觸發
  */
-const RecipeCombinationTable = ({recipes, combinations, onAssign, onSubmit}) => {
+const RecipeCombinationTable = ({recipes, combinations, assignments, onAssign, onSubmit}) => {
 
     const describe = (combination) =>
         `${combination.mood} - ${combination.taste} - ${combination.tone} - ${combination.drunk}`;
+
+    const owners = combinationOwners(recipes, assignments);
+    const pendingOf = (recipeId) => assignments.find((a) => a.recipeId === recipeId)?.combinationId ?? "";
+
+    // 選項後面標出「送出後」會用這組的其他調酒
+    const optionLabel = (combination, recipeId) => {
+        const others = (owners.get(combination.combinationId) ?? []).filter((r) => r.recipeId !== recipeId);
+        return others.length > 0
+            ? `${describe(combination)}（目前：${others.map((r) => r.zhTitle).join("、")}）`
+            : describe(combination);
+    };
 
     return (
         <section className="admin-recipe-combinations">
@@ -34,7 +49,7 @@ const RecipeCombinationTable = ({recipes, combinations, onAssign, onSubmit}) => 
                             </td>
                             <td>
                                 <select
-                                    defaultValue=""
+                                    value={pendingOf(recipe.recipeId)}
                                     onChange={(e) => onAssign(recipe.recipeId, e.target.value)}
                                 >
                                     <option value="" disabled>
@@ -45,7 +60,7 @@ const RecipeCombinationTable = ({recipes, combinations, onAssign, onSubmit}) => 
                                             key={combination.combinationId}
                                             value={combination.combinationId}
                                         >
-                                            {describe(combination)}
+                                            {optionLabel(combination, recipe.recipeId)}
                                         </option>
                                     ))}
                                 </select>

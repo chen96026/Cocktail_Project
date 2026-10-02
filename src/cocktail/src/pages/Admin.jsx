@@ -7,6 +7,7 @@ import {
 } from "../API/Admin.js";
 import CombinationForm from "../components/CombinationForm.jsx";
 import RecipeCombinationTable from "../components/RecipeCombinationTable.jsx";
+import {findSharedCombinations} from "../utils/combinationOwners.js";
 
 const Admin = () => {
     const [recipes, setRecipes] = useState([]); // 調酒主表格數據
@@ -72,6 +73,14 @@ const Admin = () => {
     };
 
     const submitAssignments = async () => {
+        setError(null);
+        // 一組組合只能分配給一杯酒；以送出後的結果檢查，同一批互換組合是允許的
+        const shared = findSharedCombinations(recipes, assignments);
+        if (shared.length > 0) {
+            const conflicts = shared.map((owners) => owners.map((recipe) => recipe.zhTitle).join("、"));
+            setError(`同一組組合只能分配給一杯酒，請調整：${conflicts.join("；")}`);
+            return;
+        }
         try {
             // 後端直接收 [{recipeId, combinationId}]，跟 assignments 的結構相同
             await assignCombinations(assignments);
@@ -92,6 +101,7 @@ const Admin = () => {
             <RecipeCombinationTable
                 recipes={recipes}
                 combinations={combinations}
+                assignments={assignments}
                 onAssign={handleAssignmentChange}
                 onSubmit={submitAssignments}
             />

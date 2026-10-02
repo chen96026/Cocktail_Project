@@ -7,9 +7,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
+
+    // 後台分配組合前檢查：目前占用這些組合的酒譜
+    public List<Recipe> findByCombination_CombinationIdIn(Collection<Integer> combinationIds);
 
     // 找到符合基酒的酒譜
     // size表示 baseWines 列表的大小，只有當某個 Recipe 包含的不同基酒名稱數量與提供的列表大小一致時，該 Recipe 才符合條件

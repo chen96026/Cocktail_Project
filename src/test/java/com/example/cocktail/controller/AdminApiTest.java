@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -39,6 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * 　　　　　2026-10-02 Harry API 路徑改為 REST 風格，新增組合改回傳 201，補篩選器與詳細頁的端點測試
  * 　　　　　2026-10-02 Harry 補新增組合欄位空白時回 400 的測試
  * 　　　　　2026-10-02 Harry 補組合列表與後台對照表依 ID 排序的測試
+ * 　　　　　2026-10-02 Harry 一組組合只能分配給一杯酒，既有分配測試改用沒人用的組合
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -60,9 +62,8 @@ class AdminApiTest {
     @Test
     void assignCombinationsReplacesRecipeCombination() throws Exception {
         Integer recipeId = recipeRepository.findAll().get(0).getRecipeId();
-        List<Combination> combinations = combinationRepository.findAll();
-        int first = combinations.get(0).getCombinationId();
-        int second = combinations.get(1).getCombinationId();
+        int first = freeCombination("A").getCombinationId();
+        int second = freeCombination("B").getCombinationId();
 
         assign(assignment(recipeId, first)).andExpect(status().isOk());
         assertEquals(first, cocktailSelectorService.getCocktailDetail(recipeId).combinationId());
@@ -75,9 +76,8 @@ class AdminApiTest {
     @Test
     void assignCombinationsWithMissingIdReturns400AndChangesNothing() throws Exception {
         Integer recipeId = recipeRepository.findAll().get(0).getRecipeId();
-        List<Combination> combinations = combinationRepository.findAll();
-        int original = combinations.get(0).getCombinationId();
-        int other = combinations.get(1).getCombinationId();
+        int original = freeCombination("A").getCombinationId();
+        int other = freeCombination("B").getCombinationId();
         assign(assignment(recipeId, original)).andExpect(status().isOk());
 
         List<String> invalidBodies = List.of(
@@ -99,13 +99,61 @@ class AdminApiTest {
     }
 
     @Test
+    void assigningCombinationHeldByAnotherRecipeIsRejected() throws Exception {
+        List<Recipe> recipes = recipeRepository.findAll();
+        Integer first = recipes.get(0).getRecipeId();
+        Integer second = recipes.get(1).getRecipeId();
+        int firstCombination = currentCombination(first);
+        int secondCombination = currentCombination(second);
+
+        assign(assignment(first, secondCombination))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(startsWith("同一組組合只能分配給一杯酒")));
+
+        assertEquals(firstCombination, currentCombination(first));
+        assertEquals(secondCombination, currentCombination(second));
+    }
+
+    @Test
+    void swappingCombinationsInOneBatchIsAllowed() throws Exception {
+        List<Recipe> recipes = recipeRepository.findAll();
+        Integer first = recipes.get(0).getRecipeId();
+        Integer second = recipes.get(1).getRecipeId();
+        int firstCombination = currentCombination(first);
+        int secondCombination = currentCombination(second);
+
+        // 以套用後的結果判斷，同一批互換不算重複
+        assign(assignment(first, secondCombination) + ", " + assignment(second, firstCombination))
+                .andExpect(status().isOk());
+
+        assertEquals(secondCombination, currentCombination(first));
+        assertEquals(firstCombination, currentCombination(second));
+    }
+
+    @Test
+    void sameCombinationTwiceInOneBatchIsRejected() throws Exception {
+        List<Recipe> recipes = recipeRepository.findAll();
+        Integer first = recipes.get(0).getRecipeId();
+        Integer second = recipes.get(1).getRecipeId();
+        int firstCombination = currentCombination(first);
+        int free = freeCombination("A").getCombinationId();
+
+        assign(assignment(first, free) + ", " + assignment(second, free))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(startsWith("同一組組合只能分配給一杯酒")));
+
+        // 整批被拒，第一筆也不能生效
+        assertEquals(firstCombination, currentCombination(first));
+    }
+
+    @Test
     void recipeWithoutCombinationIsListedButHasNoDetailUntilAssigned() throws Exception {
         Recipe recipe = new Recipe();
         recipe.setEnTitle("No Combination Cocktail");
         recipe.setZhTitle("尚未分配組合的測試調酒");
         recipe.setMethod("尚未分配組合");
         Integer recipeId = recipeRepository.saveAndFlush(recipe).getRecipeId();
-        int combinationId = combinationRepository.findAll().get(0).getCombinationId();
+        int combinationId = freeCombination("A").getCombinationId();
 
         // 後台列表是 LEFT JOIN，沒分配組合的酒譜也要列出，組合欄位為 null
         mockMvc.perform(get(RECIPE_COMBINATIONS))
@@ -128,7 +176,7 @@ class AdminApiTest {
     @Test
     void selectorReturnsRecipesMatchingAllFourDimensions() throws Exception {
         Integer recipeId = recipeRepository.findAll().get(0).getRecipeId();
-        Combination combination = combinationRepository.findAll().get(0);
+        Combination combination = freeCombination("A");
         assign(assignment(recipeId, combination.getCombinationId())).andExpect(status().isOk());
 
         mockMvc.perform(get("/lastwine/selector")
@@ -199,6 +247,29 @@ class AdminApiTest {
         List<Integer> ids = JsonPath.read(json, "$[*]." + idField);
         assertFalse(ids.isEmpty());
         assertEquals(ids.stream().sorted().toList(), ids);
+    }
+
+    /**
+     * seed 的 48 組組合都已分配出去，測試要用的組合另外建，保證沒有被任何酒譜占用
+     *
+     * @param tag 讓四個欄位跟既有組合不重複的後綴
+     * @return 已存檔、沒有被任何酒譜使用的組合
+     */
+    private Combination freeCombination(String tag) {
+        Combination combination = new Combination();
+        combination.setMood("測試心情" + tag);
+        combination.setTaste("測試口味" + tag);
+        combination.setTone("測試冷暖" + tag);
+        combination.setDrunk("測試醉度" + tag);
+        return combinationRepository.saveAndFlush(combination);
+    }
+
+    /**
+     * @param recipeId 酒譜 ID
+     * @return 該酒譜目前的組合 ID
+     */
+    private int currentCombination(Integer recipeId) {
+        return cocktailSelectorService.getCocktailDetail(recipeId).combinationId();
     }
 
     /**
