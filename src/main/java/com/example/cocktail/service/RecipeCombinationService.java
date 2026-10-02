@@ -43,7 +43,8 @@ public class RecipeCombinationService {
     @Transactional
     public void assignCombinations(List<AssignmentRequest> assignments) {
         if (assignments.stream().anyMatch(RecipeCombinationService::isIncomplete)) {
-            throw new BusinessException("分配資料缺少酒譜或組合 ID");
+            throw new BusinessException("分配資料缺少酒譜或組合 ID",
+                    "Assignment missing recipeId or combinationId");
         }
         for (AssignmentRequest assignment : assignments) {
             assignCombination(assignment.recipeId(), assignment.combinationId());
@@ -58,9 +59,11 @@ public class RecipeCombinationService {
      */
     private void assignCombination(Integer recipeId, Integer combinationId) {
         Recipe recipe = recipeRepository.findById(recipeId)
-                .orElseThrow(() -> new NotFoundException("找不到該酒譜: " + recipeId));
+                .orElseThrow(() -> new NotFoundException("找不到該酒譜: " + recipeId,
+                        "Recipe not found, recipeId=" + recipeId));
         Combination combination = combinationRepository.findById(combinationId)
-                .orElseThrow(() -> new NotFoundException("找不到該組合: " + combinationId));
+                .orElseThrow(() -> new NotFoundException("找不到該組合: " + combinationId,
+                        "Combination not found, combinationId=" + combinationId));
 
         recipe.setCombination(combination);
     }

@@ -40,7 +40,8 @@ public class CocktailSelectorService {
     public CocktailDetailDTO getCocktailDetail(Integer recipeId) {
         CocktailDetailDTO detail = recipeRepository.findDetailByRecipeId(recipeId);
         if (detail == null) {
-            throw new NotFoundException("找不到該調酒的組合資料，ID: " + recipeId);
+            throw new NotFoundException("找不到該調酒的組合資料，ID: " + recipeId,
+                    "Combination detail not found, recipeId=" + recipeId);
         }
         return detail.withMaterials(materialRepository.findMaterialsByRecipeId(recipeId));
     }

@@ -28,7 +28,7 @@ public class CombinationService {
         boolean exists = combinationRepository.existsByMoodAndTasteAndToneAndDrunk(
                 request.mood(), request.taste(), request.tone(), request.drunk());
         if (exists) {
-            throw new BusinessException("組合已存在，無法重複新增");
+            throw new BusinessException("組合已存在，無法重複新增", "Duplicate combination");
         }
         Combination combination = new Combination();
         combination.setMood(request.mood());

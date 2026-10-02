@@ -65,7 +65,7 @@ public class RecipeService {
     @Transactional
     public Integer addRecipe(RecipeRequest request, MultipartFile image) {
         if (recipeRepository.existsByEnTitleOrZhTitle(request.enTitle(), request.zhTitle())) {
-            throw new BusinessException("酒譜名稱已存在，無法重複新增");
+            throw new BusinessException("酒譜名稱已存在，無法重複新增", "Duplicate recipe title on create");
         }
 
         Recipe recipe = new Recipe();
@@ -92,7 +92,8 @@ public class RecipeService {
         Recipe existingRecipe = findRecipe(recipeId);
         // 要在改 Entity 欄位之前檢查，否則查詢前的 auto flush 會先把重名寫進 DB 撞 unique
         if (recipeRepository.existsTitleInOtherRecipe(request.enTitle(), request.zhTitle(), recipeId)) {
-            throw new BusinessException("酒譜名稱與其他酒譜重複，無法更新");
+            throw new BusinessException("酒譜名稱與其他酒譜重複，無法更新",
+                    "Duplicate recipe title on update, recipeId=" + recipeId);
         }
 
         existingRecipe.setEnTitle(request.enTitle());
@@ -177,7 +178,8 @@ public class RecipeService {
      */
     private Recipe findRecipe(Integer recipeId) {
         return recipeRepository.findById(recipeId)
-                .orElseThrow(() -> new NotFoundException("找不到該酒譜，ID: " + recipeId));
+                .orElseThrow(() -> new NotFoundException("找不到該酒譜，ID: " + recipeId,
+                        "Recipe not found, recipeId=" + recipeId));
     }
 
     /**

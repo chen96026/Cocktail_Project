@@ -28,7 +28,7 @@ public class ApiExceptionHandler {
      */
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ApiError> handleNotFound(NotFoundException e) {
-        log.warn("Resource not found: {}", e.getMessage());
+        log.warn("Resource not found: {}", e.getLogMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiError(e.getMessage()));
     }
 
@@ -38,7 +38,7 @@ public class ApiExceptionHandler {
      */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ApiError> handleBusiness(BusinessException e) {
-        log.warn("Business rule violated: {}", e.getMessage());
+        log.warn("Business rule violated: {}", e.getLogMessage());
         return ResponseEntity.badRequest().body(new ApiError(e.getMessage()));
     }
 
