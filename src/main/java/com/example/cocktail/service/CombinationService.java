@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 public class CombinationService {
@@ -24,6 +25,11 @@ public class CombinationService {
      */
     @Transactional
     public void addCombination(CombinationRequest request) {
+        // 四個欄位缺任何一個都不收，避免建出空白組合
+        if (Stream.of(request.mood(), request.taste(), request.tone(), request.drunk())
+                .anyMatch(value -> value == null || value.isBlank())) {
+            throw new BusinessException("組合的四個欄位都必須填寫", "Combination request has blank fields");
+        }
         // 檢查組合是否存在
         boolean exists = combinationRepository.existsByMoodAndTasteAndToneAndDrunk(
                 request.mood(), request.taste(), request.tone(), request.drunk());

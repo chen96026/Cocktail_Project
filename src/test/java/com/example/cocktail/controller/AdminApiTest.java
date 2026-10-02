@@ -33,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * 　　　　　2026-10-02 Harry 補沒有分配組合的酒譜在列表與詳細頁的行為
  * 　　　　　2026-10-02 Harry 組合 Entity 更名為 Combination
  * 　　　　　2026-10-02 Harry API 路徑改為 REST 風格，新增組合改回傳 201，補篩選器與詳細頁的端點測試
+ * 　　　　　2026-10-02 Harry 補新增組合欄位空白時回 400 的測試
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -159,6 +160,21 @@ class AdminApiTest {
                 .andExpect(jsonPath("$[0].taste").isNotEmpty())
                 .andExpect(jsonPath("$[0].tone").isNotEmpty())
                 .andExpect(jsonPath("$[0].drunk").isNotEmpty());
+    }
+
+    @Test
+    void addCombinationWithBlankFieldsIsRejected() throws Exception {
+        long before = combinationRepository.count();
+
+        for (String body : List.of("{}",
+                "{\"mood\": \"測試心情\", \"taste\": \"測試口味\", \"tone\": \"測試冷暖\"}",
+                "{\"mood\": \"測試心情\", \"taste\": \"  \", \"tone\": \"測試冷暖\", \"drunk\": \"測試醉度\"}")) {
+            mockMvc.perform(post(COMBINATIONS).contentType(MediaType.APPLICATION_JSON).content(body))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value("組合的四個欄位都必須填寫"));
+        }
+
+        assertEquals(before, combinationRepository.count());
     }
 
     /**
