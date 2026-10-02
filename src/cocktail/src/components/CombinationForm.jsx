@@ -14,7 +14,7 @@ const FIELDS = [
 /**
  * 後台新增四維度組合的表單
  *
- * @param onSubmit 送出處理，接到 {mood, taste, tone, drunk}
+ * @param onSubmit 送出處理，接到 {mood, taste, tone, drunk}，回傳是否成功；成功才清空表單
  */
 const CombinationForm = ({onSubmit}) => {
     const [newCombination, setNewCombination] = useState(EMPTY_COMBINATION);
@@ -27,8 +27,9 @@ const CombinationForm = ({onSubmit}) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await onSubmit(newCombination);
-        setNewCombination(EMPTY_COMBINATION);
+        if (await onSubmit(newCombination)) {
+            setNewCombination(EMPTY_COMBINATION);
+        }
     };
 
     return (

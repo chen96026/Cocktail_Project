@@ -44,13 +44,16 @@ const Admin = () => {
         load();
     }, [loadCombinations, loadRecipeCombinations]);
 
+    // 回傳是否新增成功，失敗時表單保留使用者選好的內容
     const handleAddCombination = async (newCombination) => {
         try {
             await addCombination(newCombination);
             await loadCombinations();
+            return true;
         } catch (err) {
             console.error("新增組合失敗: ", err);
             setError(`新增組合失敗：${err.message}`);
+            return false;
         }
     };
 
