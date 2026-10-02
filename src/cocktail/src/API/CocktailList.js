@@ -7,17 +7,13 @@ import {request} from "./request.js";
  * @param baseWines 已勾選的基酒名稱陣列
  * @param keyword   中英文名稱關鍵字
  */
-export const findRecipes = async ({baseWines = [], keyword = ""} = {}) => {
+export const findRecipes = ({baseWines = [], keyword = ""} = {}) => {
     const params = new URLSearchParams();
     baseWines.forEach((baseWine) => params.append("baseWine", baseWine));
     if (keyword.trim()) {
         params.append("keyword", keyword.trim());
     }
     const query = params.toString();
-    const data = await request(query ? `/lastwine/recipes?${query}` : "/lastwine/recipes");
-    if (!Array.isArray(data)) {
-        console.error("後端回傳錯誤，不是陣列");
-        return [];
-    }
-    return data;
+    // 後端固定回陣列；失敗時 request 會直接丟錯，由呼叫端處理
+    return request(query ? `/lastwine/recipes?${query}` : "/lastwine/recipes");
 };
