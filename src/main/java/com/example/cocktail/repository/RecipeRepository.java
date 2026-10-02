@@ -1,6 +1,6 @@
 package com.example.cocktail.repository;
 
-import com.example.cocktail.dto.CockTailDetailDTO;
+import com.example.cocktail.dto.CocktailDetailDTO;
 import com.example.cocktail.dto.CocktailBasicDTO;
 import com.example.cocktail.model.Recipe;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,7 +17,7 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
     public List<Recipe> findByMatchingBaseWines(@Param("baseWines") List<String> baseWines, @Param("size") int size);
 
     // 找到該Id的酒譜
-    public Recipe findByRecipeId(Integer recipe_id);
+    public Recipe findByRecipeId(Integer recipeId);
 
     // 新增前檢查重名：英文或中文名稱任一已存在即算重名
     public boolean existsByEnTitleOrZhTitle(String enTitle, String zhTitle);
@@ -30,10 +30,10 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
                                             @Param("recipeId") Integer recipeId);
 
     // 後台：所有調酒與其組合，沒分配組合的酒譜也要列出（組合欄位為 null）
-    @Query("SELECT new com.example.cocktail.dto.CockTailDetailDTO(r.recipeId, r.image, r.enTitle, r.zhTitle, r.method, c.combinationId, c.mood, c.taste, c.tone, c.drunk) " +
+    @Query("SELECT new com.example.cocktail.dto.CocktailDetailDTO(r.recipeId, r.image, r.enTitle, r.zhTitle, r.method, c.combinationId, c.mood, c.taste, c.tone, c.drunk) " +
             "FROM Recipe r " +
             "LEFT JOIN r.combination c")
-    public List<CockTailDetailDTO> findRecipeCombinationDetails();
+    public List<CocktailDetailDTO> findRecipeCombinationDetails();
 
     // 篩選器：找出符合四維度組合的調酒
     @Query("SELECT new com.example.cocktail.dto.CocktailBasicDTO(r.recipeId, r.zhTitle, r.enTitle, r.image) " +
@@ -48,13 +48,13 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
     );
 
     // 篩選器 Modal 的詳細資料，材料另外查（最後是比對 Id，不是比對四種篩選）
-    @Query("SELECT new com.example.cocktail.dto.CockTailDetailDTO(" +
+    @Query("SELECT new com.example.cocktail.dto.CocktailDetailDTO(" +
             "r.recipeId, r.image,r.enTitle, r.zhTitle, r.method, " +
             "c.combinationId, c.mood, c.taste, c.tone, c.drunk) " +
             "FROM Recipe r " +
             "JOIN r.combination c " +
             "WHERE r.recipeId = :recipeId")
-    public CockTailDetailDTO findDetailByRecipeId(@Param("recipeId") Integer recipeId);
+    public CocktailDetailDTO findDetailByRecipeId(@Param("recipeId") Integer recipeId);
 
     // 搜尋功能，%適用為模糊的字串，like為模糊查詢，lower將文字都轉成小寫(以不區分大小寫)
     @Query("SELECT r FROM Recipe r WHERE LOWER(r.enTitle) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(r.zhTitle) LIKE LOWER(CONCAT('%', :keyword, '%'))")

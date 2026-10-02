@@ -42,7 +42,7 @@ public class Recipe {
     // 一杯酒最多一組四維度組合，尚未分配時為 null
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "combination_id")
-    private Combinations combination;
+    private Combination combination;
 
     public Integer getRecipeId() {
         return recipeId;
@@ -100,11 +100,11 @@ public class Recipe {
         this.materials = materials;
     }
 
-    public Combinations getCombination() {
+    public Combination getCombination() {
         return combination;
     }
 
-    public void setCombination(Combinations combination) {
+    public void setCombination(Combination combination) {
         this.combination = combination;
     }
 

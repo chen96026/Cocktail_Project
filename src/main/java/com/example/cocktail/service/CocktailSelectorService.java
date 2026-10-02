@@ -1,6 +1,6 @@
 package com.example.cocktail.service;
 
-import com.example.cocktail.dto.CockTailDetailDTO;
+import com.example.cocktail.dto.CocktailDetailDTO;
 import com.example.cocktail.dto.CocktailBasicDTO;
 import com.example.cocktail.dto.CocktailSelectorDTO;
 import com.example.cocktail.exception.NotFoundException;
@@ -37,8 +37,8 @@ public class CocktailSelectorService {
      * @return 該調酒的詳細資料（材料另外查詢後補上）
      */
     @Transactional(readOnly = true)
-    public CockTailDetailDTO getCocktailDetail(Integer recipeId) {
-        CockTailDetailDTO detail = recipeRepository.findDetailByRecipeId(recipeId);
+    public CocktailDetailDTO getCocktailDetail(Integer recipeId) {
+        CocktailDetailDTO detail = recipeRepository.findDetailByRecipeId(recipeId);
         if (detail == null) {
             throw new NotFoundException("找不到該調酒的組合資料，ID: " + recipeId);
         }

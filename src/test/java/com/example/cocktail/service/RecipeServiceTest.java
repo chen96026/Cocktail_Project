@@ -1,6 +1,6 @@
 package com.example.cocktail.service;
 
-import com.example.cocktail.dto.CockTailDetailDTO;
+import com.example.cocktail.dto.CocktailDetailDTO;
 import com.example.cocktail.dto.MaterialDTO;
 import com.example.cocktail.dto.RecipeDTO;
 import com.example.cocktail.dto.RecipeRequest;
@@ -40,6 +40,7 @@ import static org.mockito.Mockito.when;
  * 異動歷史：2026-10-02 Harry 新建
  * 　　　　　2026-10-02 Harry 補全部列表與重名檢查測試，取有組合的酒譜改用 filter
  * 　　　　　2026-10-02 Harry 組合改存 Recipe.combination，刪除測試改驗證有組合的酒譜數與組合本身保留
+ * 　　　　　2026-10-02 Harry 組合詳細 DTO 更名為 CocktailDetailDTO
  */
 @SpringBootTest
 @Transactional
@@ -63,7 +64,7 @@ class RecipeServiceTest {
     @Test
     void deleteRecipeWithCombinationKeepsTheCombination() {
         // LEFT JOIN 沒有 ORDER BY，第一筆可能是沒分配組合的酒譜，先濾掉再取
-        CockTailDetailDTO assigned = recipeRepository.findRecipeCombinationDetails().stream()
+        CocktailDetailDTO assigned = recipeRepository.findRecipeCombinationDetails().stream()
                 .filter(detail -> detail.combinationId() != null)
                 .findFirst()
                 .orElseThrow();

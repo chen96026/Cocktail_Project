@@ -1,10 +1,10 @@
 package com.example.cocktail.service;
 
 import com.example.cocktail.dto.AssignmentRequest;
-import com.example.cocktail.dto.CockTailDetailDTO;
+import com.example.cocktail.dto.CocktailDetailDTO;
 import com.example.cocktail.exception.BusinessException;
 import com.example.cocktail.exception.NotFoundException;
-import com.example.cocktail.model.Combinations;
+import com.example.cocktail.model.Combination;
 import com.example.cocktail.model.Recipe;
 import com.example.cocktail.repository.CombinationRepository;
 import com.example.cocktail.repository.RecipeRepository;
@@ -29,7 +29,7 @@ public class RecipeCombinationService {
      * @return 所有調酒與其組合的對應
      */
     @Transactional(readOnly = true)
-    public List<CockTailDetailDTO> getAllRecipeCombinations() {
+    public List<CocktailDetailDTO> getAllRecipeCombinations() {
         return recipeRepository.findRecipeCombinationDetails();
     }
 
@@ -59,7 +59,7 @@ public class RecipeCombinationService {
     private void assignCombination(Integer recipeId, Integer combinationId) {
         Recipe recipe = recipeRepository.findById(recipeId)
                 .orElseThrow(() -> new NotFoundException("找不到該酒譜: " + recipeId));
-        Combinations combination = combinationRepository.findById(combinationId)
+        Combination combination = combinationRepository.findById(combinationId)
                 .orElseThrow(() -> new NotFoundException("找不到該組合: " + combinationId));
 
         recipe.setCombination(combination);

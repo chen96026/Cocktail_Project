@@ -1,6 +1,6 @@
 package com.example.cocktail.dto;
 
-import com.example.cocktail.model.Combinations;
+import com.example.cocktail.model.Combination;
 
 /**
  * 後台組合列表的回傳資料，欄位名沿用既有 API 契約
@@ -8,6 +8,7 @@ import com.example.cocktail.model.Combinations;
  * @author Harry
  * @since 2026-10-02
  * 異動歷史：2026-10-02 Harry 新建
+ * 　　　　　2026-10-02 Harry 來源 Entity 更名為 Combination
  *
  * @param combinationId 組合 ID
  * @param mood          心情
@@ -21,7 +22,7 @@ public record CombinationDTO(Integer combinationId, String mood, String taste, S
      * @param combination 來源 Entity
      * @return 對應的 DTO
      */
-    public static CombinationDTO from(Combinations combination) {
+    public static CombinationDTO from(Combination combination) {
         return new CombinationDTO(
                 combination.getCombinationId(),
                 combination.getMood(),

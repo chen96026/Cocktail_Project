@@ -1,6 +1,6 @@
 package com.example.cocktail.controller;
 
-import com.example.cocktail.dto.CockTailDetailDTO;
+import com.example.cocktail.dto.CocktailDetailDTO;
 import com.example.cocktail.dto.CocktailBasicDTO;
 import com.example.cocktail.dto.CocktailSelectorDTO;
 import com.example.cocktail.service.CocktailSelectorService;
@@ -30,7 +30,7 @@ public class CocktailSelectorController {
 
     @GetMapping("/getCocktailDetail/{recipeId}")
     @Operation(summary = "篩選器符合調酒之資訊")
-    public ResponseEntity<CockTailDetailDTO> getCocktailDetail(@PathVariable Integer recipeId) {
+    public ResponseEntity<CocktailDetailDTO> getCocktailDetail(@PathVariable Integer recipeId) {
         return ResponseEntity.ok(cocktailSelectorService.getCocktailDetail(recipeId));
     }
 }

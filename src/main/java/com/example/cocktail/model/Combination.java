@@ -2,11 +2,15 @@ package com.example.cocktail.model;
 
 import jakarta.persistence.*;
 
+/**
+ * 四維度組合（心情／口味／冷暖／醉度），一組可被多杯調酒共用
+ * 類別名用單數，table 名稱維持 combinations，不影響 MySQL 既有資料表
+ */
 @Entity
 @Table(name = "combinations", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"mood", "taste", "tone", "drunk"})
 })
-public class Combinations {
+public class Combination {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

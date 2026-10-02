@@ -1,7 +1,7 @@
 package com.example.cocktail.controller;
 
 import com.example.cocktail.dto.AssignmentRequest;
-import com.example.cocktail.dto.CockTailDetailDTO;
+import com.example.cocktail.dto.CocktailDetailDTO;
 import com.example.cocktail.service.RecipeCombinationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,8 +24,8 @@ public class RecipeCombinationController {
     // 查詢所有調酒與組合
     @GetMapping("/allCombinations")
     @Operation(summary = "後台查詢所有調酒與組合")
-    public ResponseEntity<List<CockTailDetailDTO>> getAllRecipeCombinations() {
-        List<CockTailDetailDTO> combinations = recipeCombinationService.getAllRecipeCombinations();
+    public ResponseEntity<List<CocktailDetailDTO>> getAllRecipeCombinations() {
+        List<CocktailDetailDTO> combinations = recipeCombinationService.getAllRecipeCombinations();
         return ResponseEntity.ok(combinations);
     }
 

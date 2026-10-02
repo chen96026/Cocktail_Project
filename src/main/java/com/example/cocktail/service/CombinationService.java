@@ -3,7 +3,7 @@ package com.example.cocktail.service;
 import com.example.cocktail.dto.CombinationDTO;
 import com.example.cocktail.dto.CombinationRequest;
 import com.example.cocktail.exception.BusinessException;
-import com.example.cocktail.model.Combinations;
+import com.example.cocktail.model.Combination;
 import com.example.cocktail.repository.CombinationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +30,7 @@ public class CombinationService {
         if (exists) {
             throw new BusinessException("組合已存在，無法重複新增");
         }
-        Combinations combination = new Combinations();
+        Combination combination = new Combination();
         combination.setMood(request.mood());
         combination.setTaste(request.taste());
         combination.setTone(request.tone());

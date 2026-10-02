@@ -1,7 +1,7 @@
 package com.example.cocktail.seed;
 
 import com.example.cocktail.model.BaseWine;
-import com.example.cocktail.model.Combinations;
+import com.example.cocktail.model.Combination;
 import com.example.cocktail.model.Recipe;
 import com.example.cocktail.repository.BaseWineRepository;
 import com.example.cocktail.repository.CombinationRepository;
@@ -32,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * 異動歷史：2026-10-02 Harry 新建
  * 　　　　　2026-10-02 Harry 取酒譜改比對完整名稱，基酒改用 Set 比較
  * 　　　　　2026-10-02 Harry 組合改由 Recipe.combination 驗證，材料順序改靠 @OrderBy 保證
+ * 　　　　　2026-10-02 Harry 組合 Entity 更名為 Combination
  */
 @SpringBootTest
 @Transactional
@@ -97,7 +98,7 @@ class DataSeederTest {
      * @param expected 種子酒譜的組合，沒有分配時為 null
      * @param actual   酒譜實際帶到的組合
      */
-    private static void assertCombination(CombinationSeed expected, Combinations actual) {
+    private static void assertCombination(CombinationSeed expected, Combination actual) {
         if (expected == null) {
             assertNull(actual);
             return;

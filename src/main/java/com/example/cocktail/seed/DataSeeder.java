@@ -1,7 +1,7 @@
 package com.example.cocktail.seed;
 
 import com.example.cocktail.model.BaseWine;
-import com.example.cocktail.model.Combinations;
+import com.example.cocktail.model.Combination;
 import com.example.cocktail.model.Material;
 import com.example.cocktail.model.Recipe;
 import com.example.cocktail.repository.BaseWineRepository;
@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
  * @since 2026-10-02
  * 異動歷史：2026-10-02 Harry 新建
  * 　　　　　2026-10-02 Harry 組合改為直接設定 Recipe.combination，不再寫中介表
+ * 　　　　　2026-10-02 Harry 組合 Entity 更名為 Combination
  */
 @Component
 @Profile("!mysql")
@@ -69,7 +70,7 @@ public class DataSeeder implements CommandLineRunner {
         }
 
         Map<String, BaseWine> baseWines = new HashMap<>();
-        Map<CombinationSeed, Combinations> combinations = new HashMap<>();
+        Map<CombinationSeed, Combination> combinations = new HashMap<>();
         for (RecipeSeed seed : seedProperties.recipes()) {
             Recipe recipe = toRecipe(seed, baseWines);
             if (seed.combination() != null) {
@@ -122,8 +123,8 @@ public class DataSeeder implements CommandLineRunner {
      * @param seed 四維度組合
      * @return 已存檔的組合
      */
-    private Combinations saveCombination(CombinationSeed seed) {
-        Combinations combination = new Combinations();
+    private Combination saveCombination(CombinationSeed seed) {
+        Combination combination = new Combination();
         combination.setMood(seed.mood());
         combination.setTaste(seed.taste());
         combination.setTone(seed.tone());

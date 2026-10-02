@@ -1,6 +1,6 @@
 package com.example.cocktail.controller;
 
-import com.example.cocktail.model.Combinations;
+import com.example.cocktail.model.Combination;
 import com.example.cocktail.model.Recipe;
 import com.example.cocktail.repository.CombinationRepository;
 import com.example.cocktail.repository.RecipeRepository;
@@ -30,6 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 2026-10-02
  * 異動歷史：2026-10-02 Harry 新建
  * 　　　　　2026-10-02 Harry 補沒有分配組合的酒譜在列表與詳細頁的行為
+ * 　　　　　2026-10-02 Harry 組合 Entity 更名為 Combination
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -48,7 +49,7 @@ class AdminApiTest {
     @Test
     void assignCombinationsReplacesRecipeCombination() throws Exception {
         Integer recipeId = recipeRepository.findAll().get(0).getRecipeId();
-        List<Combinations> combinations = combinationRepository.findAll();
+        List<Combination> combinations = combinationRepository.findAll();
         int first = combinations.get(0).getCombinationId();
         int second = combinations.get(1).getCombinationId();
 
@@ -63,7 +64,7 @@ class AdminApiTest {
     @Test
     void assignCombinationsWithMissingIdReturns400AndChangesNothing() throws Exception {
         Integer recipeId = recipeRepository.findAll().get(0).getRecipeId();
-        List<Combinations> combinations = combinationRepository.findAll();
+        List<Combination> combinations = combinationRepository.findAll();
         int original = combinations.get(0).getCombinationId();
         int other = combinations.get(1).getCombinationId();
         assign(assignment(recipeId, original)).andExpect(status().isOk());
