@@ -5,6 +5,7 @@ import com.example.cocktail.model.Recipe;
 import com.example.cocktail.repository.CombinationRepository;
 import com.example.cocktail.repository.RecipeRepository;
 import com.example.cocktail.service.CocktailSelectorService;
+import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -12,11 +13,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -34,6 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * 　　　　　2026-10-02 Harry 組合 Entity 更名為 Combination
  * 　　　　　2026-10-02 Harry API 路徑改為 REST 風格，新增組合改回傳 201，補篩選器與詳細頁的端點測試
  * 　　　　　2026-10-02 Harry 補新增組合欄位空白時回 400 的測試
+ * 　　　　　2026-10-02 Harry 補組合列表與後台對照表依 ID 排序的測試
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -175,6 +180,25 @@ class AdminApiTest {
         }
 
         assertEquals(before, combinationRepository.count());
+    }
+
+    @Test
+    void combinationListAndAdminTableAreSortedById() throws Exception {
+        assertSortedById(get(COMBINATIONS), "combinationId");
+        assertSortedById(get(RECIPE_COMBINATIONS), "recipeId");
+    }
+
+    /**
+     * @param request 回傳 JSON 陣列的請求
+     * @param idField 要檢查排序的 ID 欄位
+     */
+    private void assertSortedById(MockHttpServletRequestBuilder request, String idField) throws Exception {
+        String json = mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        List<Integer> ids = JsonPath.read(json, "$[*]." + idField);
+        assertFalse(ids.isEmpty());
+        assertEquals(ids.stream().sorted().toList(), ids);
     }
 
     /**

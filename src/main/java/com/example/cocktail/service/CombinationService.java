@@ -5,6 +5,7 @@ import com.example.cocktail.dto.CombinationRequest;
 import com.example.cocktail.exception.BusinessException;
 import com.example.cocktail.model.Combination;
 import com.example.cocktail.repository.CombinationRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,11 +46,11 @@ public class CombinationService {
     }
 
     /**
-     * @return 所有已建立的四維度組合
+     * @return 所有已建立的四維度組合，依組合 ID 排序
      */
     @Transactional(readOnly = true)
     public List<CombinationDTO> getAllCombinations() {
-        return combinationRepository.findAll().stream()
+        return combinationRepository.findAll(Sort.by("combinationId")).stream()
                 .map(CombinationDTO::from)
                 .toList();
     }

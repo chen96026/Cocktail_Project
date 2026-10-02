@@ -36,10 +36,11 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
                                             @Param("zhTitle") String zhTitle,
                                             @Param("recipeId") Integer recipeId);
 
-    // 後台：所有調酒與其組合，沒分配組合的酒譜也要列出（組合欄位為 null）
+    // 後台：所有調酒與其組合，沒分配組合的酒譜也要列出（組合欄位為 null），依酒譜 ID 排序
     @Query("SELECT new com.example.cocktail.dto.CocktailDetailDTO(r.recipeId, r.image, r.enTitle, r.zhTitle, r.method, c.combinationId, c.mood, c.taste, c.tone, c.drunk) " +
             "FROM Recipe r " +
-            "LEFT JOIN r.combination c")
+            "LEFT JOIN r.combination c " +
+            "ORDER BY r.recipeId")
     public List<CocktailDetailDTO> findRecipeCombinationDetails();
 
     // 篩選器：找出符合四維度組合的調酒
