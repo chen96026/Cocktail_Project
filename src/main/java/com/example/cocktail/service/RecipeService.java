@@ -176,11 +176,8 @@ public class RecipeService {
      * @return 對應的酒譜 Entity
      */
     private Recipe findRecipe(Integer recipeId) {
-        Recipe recipe = recipeRepository.findByRecipeId(recipeId);
-        if (recipe == null) {
-            throw new NotFoundException("找不到該酒譜，ID: " + recipeId);
-        }
-        return recipe;
+        return recipeRepository.findById(recipeId)
+                .orElseThrow(() -> new NotFoundException("找不到該酒譜，ID: " + recipeId));
     }
 
     /**

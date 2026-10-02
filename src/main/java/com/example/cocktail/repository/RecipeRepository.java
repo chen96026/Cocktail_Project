@@ -26,9 +26,6 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
                                                           @Param("size") int size,
                                                           @Param("keyword") String keyword);
 
-    // 找到該Id的酒譜
-    public Recipe findByRecipeId(Integer recipeId);
-
     // 新增前檢查重名：英文或中文名稱任一已存在即算重名
     public boolean existsByEnTitleOrZhTitle(String enTitle, String zhTitle);
 
