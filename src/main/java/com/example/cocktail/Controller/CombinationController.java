@@ -1,6 +1,7 @@
 package com.example.cocktail.Controller;
 
-import com.example.cocktail.Model.Combinations;
+import com.example.cocktail.DTO.CombinationDTO;
+import com.example.cocktail.DTO.CombinationRequest;
 import com.example.cocktail.Service.CombinationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,15 +24,15 @@ public class CombinationController {
 
     @PostMapping("/addFourCombination")
     @Operation(summary = "後台加入組合至調酒")
-    public ResponseEntity<Map<String, String>> addCombination(@RequestBody Combinations combination) {
-        combinationService.addCombination(combination);
+    public ResponseEntity<Map<String, String>> addCombination(@RequestBody CombinationRequest request) {
+        combinationService.addCombination(request);
         return ResponseEntity.ok(Map.of("message", "組合新增成功"));
     }
 
     @GetMapping("/getAllCombinations")
     @Operation(summary = "後台取得組合")
-    public ResponseEntity<List<Combinations>> getAllCombinations() {
-        List<Combinations> combinations = combinationService.getAllCombinations();
+    public ResponseEntity<List<CombinationDTO>> getAllCombinations() {
+        List<CombinationDTO> combinations = combinationService.getAllCombinations();
         return ResponseEntity.ok(combinations);
     }
 }

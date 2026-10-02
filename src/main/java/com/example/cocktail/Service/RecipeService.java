@@ -94,7 +94,7 @@ public class RecipeService {
      */
     @Transactional
     public void updateRecipe(Integer recipeId, RecipeRequest request, MultipartFile image) {
-        Recipe existingRecipe = getRecipe(recipeId);
+        Recipe existingRecipe = findRecipe(recipeId);
         // 要在改 Entity 欄位之前檢查，否則查詢前的 auto flush 會先把重名寫進 DB 撞 unique
         if (recipeRepository.existsTitleInOtherRecipe(request.enTitle(), request.zhTitle(), recipeId)) {
             throw new BusinessException("酒譜名稱與其他酒譜重複，無法更新");
@@ -119,20 +119,18 @@ public class RecipeService {
      */
     @Transactional
     public void deleteRecipe(Integer recipeId) {
-        recipeRepository.delete(getRecipe(recipeId));
+        recipeRepository.delete(findRecipe(recipeId));
     }
 
     /**
+     * 在交易內轉成 DTO，回傳形狀跟 getAllRecipes 一致
+     *
      * @param recipeId 酒譜 ID
-     * @return 對應的酒譜 Entity
+     * @return 對應的酒譜
      */
     @Transactional(readOnly = true)
-    public Recipe getRecipe(Integer recipeId) {
-        Recipe recipe = recipeRepository.findByRecipeId(recipeId);
-        if (recipe == null) {
-            throw new NotFoundException("找不到該酒譜，ID: " + recipeId);
-        }
-        return recipe;
+    public RecipeDTO getRecipe(Integer recipeId) {
+        return RecipeDTO.from(findRecipe(recipeId));
     }
 
     /**
@@ -140,8 +138,24 @@ public class RecipeService {
      * @return 符合關鍵字的酒譜
      */
     @Transactional(readOnly = true)
-    public List<Recipe> searchRecipes(String keyword) {
-        return recipeRepository.searchByKeyword(keyword);
+    public List<RecipeDTO> searchRecipes(String keyword) {
+        return recipeRepository.searchByKeyword(keyword).stream()
+                .map(RecipeDTO::from)
+                .toList();
+    }
+
+    /**
+     * 只給 Service 內部用，Entity 不離開交易
+     *
+     * @param recipeId 酒譜 ID
+     * @return 對應的酒譜 Entity
+     */
+    private Recipe findRecipe(Integer recipeId) {
+        Recipe recipe = recipeRepository.findByRecipeId(recipeId);
+        if (recipe == null) {
+            throw new NotFoundException("找不到該酒譜，ID: " + recipeId);
+        }
+        return recipe;
     }
 
     /**

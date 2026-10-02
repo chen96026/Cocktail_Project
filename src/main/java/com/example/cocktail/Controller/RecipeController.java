@@ -2,7 +2,6 @@ package com.example.cocktail.Controller;
 
 import com.example.cocktail.DTO.RecipeDTO;
 import com.example.cocktail.DTO.RecipeRequest;
-import com.example.cocktail.Model.Recipe;
 import com.example.cocktail.Service.RecipeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -67,13 +66,13 @@ public class RecipeController {
 
     @GetMapping("/findRecipeId/{recipe_id}")
     @Operation(summary = "找到該調酒(編輯)")
-    public ResponseEntity<Recipe> findRecipe(@PathVariable("recipe_id") Integer recipeId) {
+    public ResponseEntity<RecipeDTO> findRecipe(@PathVariable("recipe_id") Integer recipeId) {
         return ResponseEntity.ok(recipeService.getRecipe(recipeId));
     }
 
     @GetMapping("/search")
     @Operation(summary = "搜尋功能")
-    public ResponseEntity<List<Recipe>> searchRecipes(@RequestParam String keyword) {
+    public ResponseEntity<List<RecipeDTO>> searchRecipes(@RequestParam String keyword) {
         return ResponseEntity.ok(recipeService.searchRecipes(keyword));
     }
 }

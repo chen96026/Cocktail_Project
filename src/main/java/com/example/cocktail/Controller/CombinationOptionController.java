@@ -1,7 +1,7 @@
 package com.example.cocktail.Controller;
 
+import com.example.cocktail.DTO.AssignmentRequest;
 import com.example.cocktail.DTO.CockTailDetailDTO;
-import com.example.cocktail.Model.CombinationOption;
 import com.example.cocktail.Service.CombinationOptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,8 +32,8 @@ public class CombinationOptionController {
     // 分配組合給調酒
     @PostMapping("/assignCombinations")
     @Operation(summary = "後台分配調酒與組合")
-    public ResponseEntity<Map<String, String>> assignAllCombinations(@RequestBody List<CombinationOption> combinationOptions) {
-        combinationOptionService.assignCombinations(combinationOptions);
+    public ResponseEntity<Map<String, String>> assignAllCombinations(@RequestBody List<AssignmentRequest> assignments) {
+        combinationOptionService.assignCombinations(assignments);
         return ResponseEntity.ok(Map.of("message", "所有組合分配成功"));
     }
 }

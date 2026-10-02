@@ -11,7 +11,7 @@ export const getAllTheCombinations = () => request("/lastwine/getAllCombinations
 export const getAllRecipeCombinations = () => request("/lastwine/allCombinations");
 
 /**
- * @param payload 調酒與組合的對應陣列
+ * @param payload 調酒與組合的對應陣列 [{recipeId, combinationId}]，任一 ID 缺漏後端回 400
  */
 export const assignCombinations = (payload) =>
     requestJson("/lastwine/assignCombinations", payload);

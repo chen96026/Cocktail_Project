@@ -7,6 +7,7 @@ import com.example.cocktail.Exception.NotFoundException;
 import com.example.cocktail.Repository.MaterialRepository;
 import com.example.cocktail.Repository.RecipeRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class CocktailSelectorService {
      * @param selector 篩選器的四個條件
      * @return 符合組合的調酒清單
      */
+    @Transactional(readOnly = true)
     public List<CocktailBasicDTO> findRecipesByCombination(CocktailSelectorDTO selector) {
         return recipeRepository.findRecipesByCombination(
                 selector.mood(), selector.taste(), selector.tone(), selector.drunk());
@@ -34,6 +36,7 @@ public class CocktailSelectorService {
      * @param recipeId 酒譜 ID
      * @return 該調酒的詳細資料（材料另外查詢後補上）
      */
+    @Transactional(readOnly = true)
     public CockTailDetailDTO getCocktailDetail(Integer recipeId) {
         CockTailDetailDTO detail = recipeRepository.findDetailByRecipeId(recipeId);
         if (detail == null) {

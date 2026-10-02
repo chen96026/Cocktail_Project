@@ -78,12 +78,8 @@ const Admin = () => {
 
     const submitAssignments = async () => {
         try {
-            // 包裝成後端需要的結構
-            const payload = assignments.map(({recipeId, combinationId}) => ({
-                fkRecipeId: {recipeId},
-                fkCombinationId: {combinationId},
-            }));
-            await assignCombinations(payload);
+            // 後端直接收 [{recipeId, combinationId}]，跟 assignments 的結構相同
+            await assignCombinations(assignments);
             setAssignments([]);
             await loadRecipeCombinations();
         } catch (err) {

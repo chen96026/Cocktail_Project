@@ -54,7 +54,8 @@ const CocktailSelector = () => {
             console.error("調用 API 失敗: ", error);
             Swal.fire({
                 icon: "error",
-                title: "系統錯誤，請稍後再試",
+                title: "查詢失敗",
+                text: error.message,
                 confirmButtonText: "確定",
             });
         }
@@ -88,6 +89,7 @@ const CocktailSelector = () => {
             Swal.fire({
                 icon: "error",
                 title: "無法獲取詳細資料",
+                text: error.message,
                 confirmButtonText: "確定",
             });
         }

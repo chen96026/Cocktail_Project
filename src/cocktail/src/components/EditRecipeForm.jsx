@@ -12,15 +12,16 @@ const EditRecipeForm = () => {
     useEffect(() => {
         const fetchRecipeData = async () => {
             try {
+                // 後端回 RecipeDTO：baseWines 是基酒名稱字串陣列，materials 是 {materialName, materialQuantity}
                 const recipe = await findByRecipeId(recipe_id);
                 setInitialValues({
                     enTitle: recipe.enTitle,
                     zhTitle: recipe.zhTitle,
                     method: recipe.method,
-                    baseWines: recipe.baseWines.map((wine) => wine.name),
-                    materials: recipe.materials.map((material) => ({
-                        materialName: material.materialName,
-                        materialQuantity: material.materialQuantity,
+                    baseWines: recipe.baseWines,
+                    materials: recipe.materials.map(({materialName, materialQuantity}) => ({
+                        materialName,
+                        materialQuantity,
                     })),
                 });
             } catch (error) {
@@ -42,7 +43,7 @@ const EditRecipeForm = () => {
             Swal.fire("更新成功", "", "success");
         } catch (error) {
             console.error("更新酒譜失敗：", error);
-            Swal.fire("更新失敗", "請稍後再試", "error");
+            Swal.fire("更新失敗", error.message, "error");
             throw error;
         }
     };
