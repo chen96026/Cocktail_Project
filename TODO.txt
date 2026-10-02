@@ -55,6 +55,7 @@ cocktail:
 說明：
 - 四維度組合直接內嵌在每杯酒下面，不用另外維護 combination_option
 - 沒有分配組合的酒譜，combination 那行省略即可
+- 一組組合只能給一杯酒：後台分配時前後端都會擋，但直接改 YAML 不會檢查，自己注意不要重複
 - image 存 Cloudinary URL，換電腦照樣看得到圖
 - 基酒名稱要跟前端 constants/options.js 的 BASE_WINES value 一致
 
@@ -158,14 +159,6 @@ ddl-auto=update 會幫 recipe 加欄位，但不會搬資料。建議在新版�
        Entity 不能用 record（JPA 要無參建構子 + 可變），只能靠 Lombok @Getter @Setter
        → 需要新增 dependency，先確認
 
-[ ] 7. Admin 後台的組合過濾條件
-       原本 !recipes.some(r => r.currentCombination?.combinationId === ...) 因為
-       後端 DTO 是平的 combinationId，這個 filter 從來沒生效過，拆元件時已移除，
-       維持「所有組合都顯示」的現狀行為。
-       如果原意是「已被指派的組合不要再出現」，要改成 r.combinationId 比對，
-       但要注意副作用：組合全配完後下拉會變空，就不能再改配對了
-       （比較合理的版本：排除被別的調酒占用的組合，但保留自己目前那一個）
-
 [ ] 8. 設定檔分 profile
        datasource 已拆成預設（H2）/ mysql 兩個 profile
        剩 show-sql=true、Swagger 永遠開著，可以再拆 local / prod
@@ -207,6 +200,8 @@ ddl-auto=update 會幫 recipe 加欄位，但不會搬資料。建議在新版�
 
 - 請求參數或內容格式錯誤（漏帶參數或 multipart part、JSON 壞掉、型別錯）改回 400，不再落到 500（原待辦 9）
 - Spring Boot 3.4.0 → 3.5.16、springdoc 2.8.14 → 2.9.1（swagger-ui 5.32.14，含 2.9 的 CVE 修補）（原待辦 10）
+- 一組組合只能分配給一杯酒（原待辦 7）：下拉選單標出被哪一杯占用，送出前檢查；以送出後的結果判斷，
+  同一批互換允許，後端同樣檢查並整批拒絕
 - 新增組合四個欄位不得空白（原待辦 11）；組合列表與後台對照表依 ID 固定排序（原待辦 12）
 - 零碎清理：移除重複的 jdbc starter、deprecated 的 MySQL8Dialect 設定、與 findById 重複的 findByRecipeId，
   CloudinaryService 改建構子注入；錯誤 log 改記英文說明（例外同時帶回給前端的中文訊息與 log 用的英文）
