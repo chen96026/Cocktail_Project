@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -26,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * @author Harry
  * @since 2026-10-02
  * 異動歷史：2026-10-02 Harry 新建
+ * 　　　　　2026-10-02 Harry 取酒譜改比對完整名稱，基酒改用 Set 比較
  */
 @SpringBootTest
 @Transactional
@@ -60,12 +63,18 @@ class DataSeederTest {
     @Test
     void seedsRecipeContent() {
         RecipeSeed seed = seedProperties.recipes().get(0);
-        Recipe recipe = recipeRepository.searchByKeyword(seed.enTitle()).get(0);
+        // searchByKeyword 是 LIKE 模糊查詢，可能撈到名稱包含它的別杯，取名稱完全相同的那筆
+        Recipe recipe = recipeRepository.searchByKeyword(seed.enTitle()).stream()
+                .filter(r -> r.getEnTitle().equals(seed.enTitle()))
+                .findFirst()
+                .orElseThrow();
 
         assertEquals(seed.zhTitle(), recipe.getZhTitle());
         assertEquals(seed.image(), recipe.getImage());
         assertEquals(seed.method(), recipe.getMethod());
-        assertEquals(seed.baseWines(), recipe.getBaseWines().stream().map(BaseWine::getName).toList());
+        // 基酒是 ManyToMany 且沒有 @OrderColumn，載入順序不保證，用 Set 比較
+        assertEquals(Set.copyOf(seed.baseWines()),
+                recipe.getBaseWines().stream().map(BaseWine::getName).collect(Collectors.toSet()));
         assertEquals(seed.materials().stream().map(m -> m.name() + "=" + m.quantity()).toList(),
                 recipe.getMaterials().stream().map(m -> m.getMaterialName() + "=" + m.getMaterialQuantity()).toList());
     }

@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * @author Harry
  * @since 2026-10-02
  * 異動歷史：2026-10-02 Harry 新建
+ * 　　　　　2026-10-02 Harry 取有組合的酒譜改用 filter
  */
 @SpringBootTest
 @Transactional
@@ -31,7 +32,11 @@ class RecipeServiceTest {
 
     @Test
     void deleteRecipeAlsoRemovesItsCombinationOption() {
-        CockTailDetailDTO assigned = combinationOptionRepository.findRecipeCombinationDetails().get(0);
+        // LEFT JOIN 沒有 ORDER BY，第一筆可能是沒分配組合的酒譜，先濾掉再取
+        CockTailDetailDTO assigned = combinationOptionRepository.findRecipeCombinationDetails().stream()
+                .filter(detail -> detail.combinationId() != null)
+                .findFirst()
+                .orElseThrow();
         long recipes = recipeRepository.count();
         long options = combinationOptionRepository.count();
 
