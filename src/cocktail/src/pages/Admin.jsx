@@ -29,7 +29,7 @@ const Admin = () => {
             setCombinations(distinctCombinations(await getAllTheCombinations()));
         } catch (err) {
             console.error("獲取所有組合失敗: ", err);
-            setError("無法獲取組合數據，請稍後重試。");
+            setError(`無法獲取組合數據：${err.message}`);
         }
     }, []);
 
@@ -38,7 +38,7 @@ const Admin = () => {
             setRecipes(await getAllRecipeCombinations());
         } catch (err) {
             console.error("獲取調酒與組合失敗: ", err);
-            setError("無法獲取調酒數據，請稍後重試。");
+            setError(`無法獲取調酒數據：${err.message}`);
         }
     }, []);
 
@@ -58,7 +58,7 @@ const Admin = () => {
             await loadCombinations();
         } catch (err) {
             console.error("新增組合失敗: ", err);
-            setError("新增組合失敗，請稍後重試。");
+            setError(`新增組合失敗：${err.message}`);
         }
     };
 
@@ -88,7 +88,7 @@ const Admin = () => {
             await loadRecipeCombinations();
         } catch (err) {
             console.error("提交分配時發生錯誤: ", err);
-            setError("分配失敗，請稍後重試。");
+            setError(`分配失敗：${err.message}`);
         }
     };
 
