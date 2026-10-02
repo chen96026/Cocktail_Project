@@ -1,0 +1,842 @@
+# 調酒資料的唯一真實來源，啟動時由 DataSeeder 載入 H2。
+# 由 2026-09-28 的 MySQL dump 轉出。
+cocktail:
+  seed:
+    recipes:
+      - enTitle: Screwdriver
+        zhTitle: 螺絲起子
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735032015/xx8vhqwusy2bhoybsdsf.jpg
+        method: |-
+          早期在伊朗油田工作的美國工人，為了在工作中能偷偷的喝酒，在罐裝的柳橙汁倒入伏特加，當然現場不會有雪克杯，所以用螺絲起子喇一喇後飲用，因此取名為螺絲起子。
+          螺絲起子的酒精度不高，加上微酸、微甜的口感，非常容易入喉，因此經常讓人忘了它依然是有酒精的飲料，所以飲用螺絲起子時，別被它的酸甜口感騙了。
+        baseWines: [Vodka]
+        materials:
+          - name: 伏特加
+            quantity: 45ml
+          - name: 柳橙汁
+            quantity: 120ml
+        combination: {mood: 普通, taste: 酸, tone: 暖, drunk: 微酣}
+      - enTitle: Cosmopolitan
+        zhTitle: 柯夢波丹
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735032782/qb7f1fqyfxju2yh1lxby.jpg
+        method: |-
+          淡粉色的「柯夢波丹」是酒吧或夜店的經典調酒，但使它聲名大噪的，是超夯影集慾望城市中女主角 Kelly最常點這款酒，也因此成為了時髦女性的雞尾酒代表。
+          柯夢波丹的起源一般認為在1987年調酒師 John Caine從明尼蘇達州帶入舊金山。同年，曼哈頓的調酒師 Toby Cecchini創造了柯夢波丹的國際標準版。
+          擁有國際的美名與朦朧的粉紅色，柯夢波丹帶有柑橘橙香、微甜略帶酸澀，可使用帶有柑橘香氣的Vodka與橙酒、檸檬汁和蔓越莓汁混合，是一款富含香甜水果香氣的調酒。
+        baseWines: [Vodka, Others]
+        materials:
+          - name: 伏特加
+            quantity: 40ml
+          - name: 橙酒
+            quantity: 15ml
+          - name: 萊姆汁
+            quantity: 15ml
+          - name: 蔓越莓汁
+            quantity: 30ml
+        combination: {mood: 愉悅, taste: 酸, tone: 暖, drunk: 微酣}
+      - enTitle: Sex on the beach
+        zhTitle: 性感海灘
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735033230/jekwnqhdscob0fpgp8fz.jpg
+        method: |-
+          這是一款非常年輕的調酒，在1987 年美國佛州調酒師 Ted Pizio參加由酒商辦的雞尾酒比賽，要用酒商新推出的 Peach Schnapps創作一款雞尾酒。
+          Ted將他的創作取名為 "Sex On The Beach"，大家來到佛羅里達不就是為了陽光、沙灘、比基尼 & 希望能來個Sex On The Beach，他的創作用了大量果汁和 Peach Schnapps，又用不少的伏特加，完全掩蓋酒精濃度，酒量不好的可能一覺醒來發現自己怎麼倒睡在沙灘上。
+        baseWines: [Vodka, Others]
+        materials:
+          - name: 伏特加
+            quantity: 40ml
+          - name: 桃味烈酒
+            quantity: 20ml
+          - name: 蔓越莓汁
+            quantity: 40ml
+          - name: 柳橙汁
+            quantity: 40ml
+        combination: {mood: 愉悅, taste: 酸, tone: 暖, drunk: 酩酊大醉}
+      - enTitle: Kamikaze
+        zhTitle: 神風特攻隊
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735033347/vg3pc8neqh5gtittd3ch.jpg
+        method: |-
+          提到神風特攻隊，大家一定都會聯想到這是一支在第二次世界大戰期間，讓美國人聞風喪膽的日本自殺式戰鬥機部隊-神風特攻隊。
+          神風特攻隊這款調酒則是源自於美國的經典伏特加調酒，因為其口感辛辣，很多人第一次喝時，被酒精味嗆到受不了，充分感受到神風特攻隊的衝擊性，就像神風特攻隊帶給美國人的自殺恐懼的感覺，因而得名。
+          第一次嘗試的人一定要抱著必死的決心。乾杯。不夠嗆辣就無法成為神風特攻隊，神風的味道就像辛辣的伏特加口感直上腦門，宛如自殺飛機向航艦俯衝而來的爆炸口感。
+        baseWines: [Vodka, Others]
+        materials:
+          - name: 伏特加
+            quantity: 30ml
+          - name: 君度橙酒
+            quantity: 30ml
+          - name: 檸檬汁
+            quantity: 30ml
+        combination: {mood: 沉重, taste: 酸, tone: 冷, drunk: 微酣}
+      - enTitle: Black Russian
+        zhTitle: 黑色俄羅斯
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735033537/dp3v1jvtmxk2huipheaf.jpg
+        method: |-
+          黑色俄羅斯這款調酒是 1949 年由比利時調酒師 Gustave Tops，在布魯塞爾的飯店 Hotel Metropole中所發明，當時美國駐盧森堡大使 Perle Mesta 到訪 Hotel Metropole，而Gustave 創造了這款調酒獻給她。
+          因為伏特加本身沒什麼個性，因此在調製這款酒時咖啡利口酒的角色就很重要，可以根據使用不同的咖啡利口酒來更動比例，比較常見的是1:2 到 1:3 之間。
+          此外除了伏特加和咖啡利口酒，也可以加入新鮮的咖啡，會為這杯調酒帶來不一樣的香氣與層次。
+        baseWines: [Vodka, Others]
+        materials:
+          - name: 伏特加
+            quantity: 50ml
+          - name: 咖啡利口酒
+            quantity: 20ml
+        combination: {mood: 煩悶, taste: 苦, tone: 冷, drunk: 微酣}
+      - enTitle: Moscow Mule
+        zhTitle: 莫斯科騾子
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735033717/jkkuxmurcc9arwtt8xpg.jpg
+        method: |-
+          聽名字大家肯定以為這款酒是來自莫斯科吧。但這可是三個美國人把賣不出去的東西湊在一起發明的調酒！
+          莫斯科騾子是由傑克摩根 (Jack Morgan)、約翰馬丁 (John Martin)和魯道夫・卡納(Rudolph Kunett)三人發想出來的。
+          Moscow Mule的獨特在於一口下肚當你以為他是酸酸甜甜的的檸檬果汁，餘韻薑汁啤酒與伏特加帶來的辛辣嗆涼酒感馬上讓你瞬間清涼。搭配經典的銅杯除了可以鎖住碎冰的冰鎮度，粗曠霸氣外型讓你啜飲時宛如復古電影中一個柔情似水的硬漢身處酒吧憂愁買醉。清爽的口感與風味，就可比Gin Tonic 般簡單又不失風雅，又更增添一股夏日的酸甜。
+        baseWines: [Vodka]
+        materials:
+          - name: 伏特加
+            quantity: 40ml
+          - name: 薑汁汽水
+            quantity: 120ml
+          - name: 檸檬汁
+            quantity: 10ml
+        combination: {mood: 煩悶, taste: 酸, tone: 冷, drunk: 微酣}
+      - enTitle: Godfather
+        zhTitle: 教父
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735034125/wic3d0segsxcdjpt9qco.jpg
+        method: |-
+          教父誕生於1970年代，也就是迪斯可時期。在這個年代的調酒都有一個特點，就是特別喜愛使用利口酒。像是教父使用杏仁利口酒Amaretto，或是蜂蜜利口酒 Drambuie、白蘭地橙酒 Grand Marnier等。
+          而教父這部電影上映於1972年，講述的是義大利黑手黨的故事。而調酒所使用的 Amaretto就是義大利當地的一種利口酒，常作為餐後消化酒使用。
+        baseWines: [Whisky, Others]
+        materials:
+          - name: 蘇格蘭威士忌
+            quantity: 35ml
+          - name: 杏仁利口酒
+            quantity: 35ml
+        combination: {mood: 普通, taste: 苦, tone: 暖, drunk: 微酣}
+      - enTitle: Highball
+        zhTitle: 高球
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735034269/gbepesacxvvrpw01cagy.jpg
+        method: |-
+          炎炎夏日，直接純飲威士忌是不是讓人覺得壓力有點大呢？這個時候不如喝一杯Highball吧～清爽的蘇打氣泡感，在夏天好解熱啊！尤其在日本，各家居酒屋除了生啤酒之外，賣最好的大概就是Highball了。
+          在蘇格蘭高爾夫球場，愛喝威士忌的人用威士忌混合蘇打水喝，這時候有高球飛過來，「是Highball呀～」就取名為Highball。
+        baseWines: [Whisky]
+        materials:
+          - name: 威士忌
+            quantity: 30ml
+          - name: 蘇打水
+            quantity: 120ml
+        combination: {mood: 普通, taste: 酸, tone: 冷, drunk: 微酣}
+      - enTitle: Penicillin
+        zhTitle: 盤尼西林
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735034601/hg81omsq473i0ipow0rh.jpg
+        method: |-
+          Penicillin，這個名子聽起來很恐怖，怎麼跟藥品同名。事實上，它來自美國的酒保Sam Ross於2005年發明的。
+          Sam把原本的波本威士忌換成了蘇格蘭威士忌，並加入了生薑，再用泥煤威士忌漂浮在飲料上，加入了煙燻和泥煤風味的元素。又因其中的泥煤味聞起來像消毒水，Sam就將這款調酒取名為Penicillin，有趣的是，它的基酒蘇格蘭威士忌與同名的藥品盤尼西林，同樣都來自蘇格蘭威，或許這其中真有特殊的關聯。
+        baseWines: [Whisky]
+        materials:
+          - name: 蘇格蘭威士忌
+            quantity: 60ml
+          - name: 艾雷島(泥煤)威士忌
+            quantity: 7.5ml
+          - name: 檸檬汁
+            quantity: 22.5ml
+          - name: 蜂蜜
+            quantity: 22.5ml
+          - name: 薑
+            quantity: 1片
+        combination: {mood: 煩悶, taste: 苦, tone: 冷, drunk: 酩酊大醉}
+      - enTitle: Manhattan
+        zhTitle: 曼哈頓
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735034812/m61ha6vkqjpy2iv9y3ac.jpg
+        method: |-
+          這杯鼎鼎大名的調酒，就算你沒喝過，也絕對在派對、酒吧裡聽過它的大名無數次。這杯酒如此有名，想當然由來也眾說紛紜，有一說是英國前首相邱吉爾之母Jennie Jerome在19世紀末某個競選晚宴上，當時調酒師的創作，但普遍被認為較可靠的說法，是同樣在1870年代，紐約的Manhattan Club中，Bartender的神來一筆之作。
+          不過，無論哪種版本，這杯酒喝來要對味，一定要使用純正美國Rye裸麥威士忌調製，否則怎麼喝都不會順口。
+        baseWines: [Whisky, Others]
+        materials:
+          - name: 黑麥威士忌
+            quantity: 50ml
+          - name: 甜苦艾酒
+            quantity: 20ml
+          - name: 安哥斯苦精
+            quantity: 2滴
+        combination: {mood: 愉悅, taste: 苦, tone: 暖, drunk: 酩酊大醉}
+      - enTitle: Whisky Coke
+        zhTitle: 威士忌可樂
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735034933/rhhdykhnx7gy63q7ebky.jpg
+        method: |-
+          十分經典的家居調酒！威士忌醇厚味道以及可樂香甜完美融合的調酒！
+        baseWines: [Whisky]
+        materials:
+          - name: 波本威士忌
+            quantity: 40ml
+          - name: 可樂
+            quantity: 400ml
+          - name: 檸檬片
+            quantity: 1片
+        combination: {mood: 愉悅, taste: 甜, tone: 暖, drunk: 微酣}
+      - enTitle: King’s Valley
+        zhTitle: 國王谷
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735035038/rrmixztpxswx4uzuqwqt.jpg
+        method: |-
+          1986年日本調酒大師上田和男調製出「國王谷」，翠綠的酒色象徵勃勃生機。在未使用綠色原料的情況下，上田和男的創舉震驚調酒界，讓國王谷的名享譽國際。
+          國王谷選用蘇格蘭威士忌，加入君度橙酒、現榨萊姆汁與藍柑橘香甜酒，最後以搖盪法充分混和調酒。搖盪法是常見的調酒手法，將調酒材料與冰塊放入雪克杯中搖蕩，混和調酒並達到快速冰鎮效果。君度橙酒的黃色與藍柑橘香甜酒的藍色互相搭配，造就國王谷鮮綠動人的色彩。
+        baseWines: [Whisky, Others]
+        materials:
+          - name: 蘇格蘭調和式威士忌
+            quantity: 60ml
+          - name: 君度橙酒
+            quantity: 15ml
+          - name: 藍柑橘香甜酒
+            quantity: 1tsp
+          - name: 萊姆汁
+            quantity: 15ml
+        combination: {mood: 愉悅, taste: 酸, tone: 冷, drunk: 微酣}
+      - enTitle: Gin & Tonic
+        zhTitle: 琴通寧
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735035515/y8epojukvvpdwevyqtil.jpg
+        method: |-
+          Tonic通寧水是一種以印度奎寧Quinine為原料所造出來的藥劑，主要用途是解熱與對抗瘧疾，前往印度的英國士兵為了消暑與預防瘧疾，飲用了含奎寧的Tonic Water，但因為非常苦澀，後來發現加入琴酒就能讓Tonic Water變得較為順口。
+          後來英國士兵將這種飲用配方帶回英國，而近年Gin & Tonic也是最熱門的調酒之一，除了講究不同的琴酒、就連通寧水也是五花八門。光一支Gin & Tonic還能出一本酒譜的書，可見它多麼受歡迎。
+        baseWines: [Gin]
+        materials:
+          - name: 琴酒
+            quantity: 45ml
+          - name: 通寧水
+            quantity: 滿杯
+        combination: {mood: 愉悅, taste: 苦, tone: 冷, drunk: 微酣}
+      - enTitle: Martini
+        zhTitle: 馬丁尼
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735035604/p8snl2wvi4laqd2aepoh.jpg
+        method: |-
+          馬丁尼被稱做「雞尾酒之王」，屬於餐前酒的一種。在所有調酒中，馬丁尼的調法最多，也是公認最難做的調酒。然而，馬丁尼也是最簡單的調酒，只要把琴酒和苦艾酒冰鎮攪拌均勻，倒入酒杯，附上橄欖，就大功告成了。
+          看過007電影的人一定都知道，馬丁尼是龐德的最愛，而且他都會要求酒保“Shaken,not stirred.”(用搖的，不要用攪拌的)。雖然用搖的不是調製馬丁尼的正統方法，但是馬丁尼本來就沒有特定的調法。
+        baseWines: [Gin, Others]
+        materials:
+          - name: 琴酒
+            quantity: 60ml
+          - name: 不甜香艾酒
+            quantity: 10ml
+          - name: 橄欖或檸檬皮
+            quantity: 裝飾
+        combination: {mood: 普通, taste: 苦, tone: 冷, drunk: 微酣}
+      - enTitle: Gimlet
+        zhTitle: 琴蕾
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735035913/araiac0ojozdlus0oxcz.jpg
+        method: |-
+          琴蕾的酒譜可以追溯到1870年英國海軍時期，當時在海上的水手因為缺乏蔬果，常得到壞血病(缺乏維生素C)。於是船醫Thomas Gimlette把水手隨身不離的琴酒加入當時的濃縮檸檬汁，就成了琴蕾的雛形。
+          到了現在，由於追求更好的口感，多用新鮮的檸檬汁取代濃縮檸檬汁，並會加入糖漿緩和強烈的酸味。而琴蕾正因為材料和調製方式簡單，更可以看出調酒師搖盪法的技術，檸檬品質的把握，和琴酒的選擇。
+        baseWines: [Gin]
+        materials:
+          - name: 琴酒
+            quantity: 60ml
+          - name: 檸檬汁
+            quantity: 20ml
+          - name: 糖漿
+            quantity: 15ml
+        combination: {mood: 沉重, taste: 苦, tone: 冷, drunk: 微酣}
+      - enTitle: Negroni
+        zhTitle: 內格羅尼
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735036085/v3wrgrkc2hk50ebfiobm.jpg
+        method: |-
+          這杯酒的誕生，是在1919年義大利某家酒吧，從美國回來的 Negroni先生點了一杯他最愛的 Americano(美國佬) 原本是以 Campari為基酒並加了蘇打水，較為清爽的調酒但酒感較低，當天他心情很不好想買醉一波，於是要求調酒師把蘇打水直接換成琴酒，讓酒感更濃厚，同時美國佬裝飾用的檸檬皮也換成了柳橙皮，就是這麼莫名其妙，Negroni就誕生了，而且非常受歡迎，味道是比較偏苦，而尾韻又會帶一點回甘甜，讓人難以忘懷。
+        baseWines: [Gin, Others]
+        materials:
+          - name: 琴酒
+            quantity: 30ml
+          - name: 金巴利
+            quantity: 30ml
+          - name: 甜味(紅)苦艾酒
+            quantity: 30ml
+          - name: 柳橙皮
+            quantity: 1/8片
+        combination: {mood: 煩悶, taste: 苦, tone: 暖, drunk: 微酣}
+      - enTitle: Jasmine
+        zhTitle: 茉莉
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735036179/uyd5mfhmypvjgpvwgrf8.png
+        method: |-
+          Jasmine 是由調酒師Paul Harrington所設計，之所以會有這杯調酒，是因為他的大學同學跟他要求做一杯「全新的調酒」，他後來也以這位同學的名字來命名這杯酒。Jasmine後來被收錄在他自己出版的調酒書中，也因此廣為流傳。
+          柑橘、微微的苦味，Jasmine明明沒有加葡萄柚，但喝起來卻頗有葡萄柚感，非常有趣。
+        baseWines: [Gin, Others]
+        materials:
+          - name: 琴酒
+            quantity: 45ml
+          - name: 君度橙酒
+            quantity: 7.5ml
+          - name: 金巴利
+            quantity: 7.5ml
+          - name: 檸檬汁
+            quantity: 22.5ml
+        combination: {mood: 沉重, taste: 苦, tone: 冷, drunk: 酩酊大醉}
+      - enTitle: Aviation
+        zhTitle: 飛行
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735036316/i05gfkqrxo6mbibhyep8.jpg
+        method: |-
+          Aviation 為1916年紐約沃利克飯店調酒師 Hugo Ensslin的創作，調製這款琴酒、黑櫻桃利口酒、紫羅蘭香甜酒、新鮮萊姆汁構成簡單卻經典的雞尾酒時，往往會因材料的各家廠牌不異，呈現出不同的顏色。
+          Aviation結合了花香，果香，草本香三種強烈香氣，因此拿捏好比例，讓三者完美平衡，正是Aviation困難之處，但那藍色蒼穹、紫色晚霞絕對能一掃你心中陰霾！
+          深受歐美人士愛戴的Aviation，甚至有酒商直接出了一支此款口味的琴酒，不妨跟風探索他的迷人香氣吧。若你鍾愛花、藥草系的飲品，Aviation絕對會讓你愛不釋手，上癮他的酸甜花香與淡然的草本香。
+        baseWines: [Gin, Others]
+        materials:
+          - name: 琴酒
+            quantity: 15ml
+          - name: 黑櫻桃酒
+            quantity: 15ml
+          - name: 檸檬汁
+            quantity: 7.5ml
+          - name: 紫羅蘭香甜酒
+            quantity: 1bsp
+        combination: {mood: 愉悅, taste: 苦, tone: 冷, drunk: 酩酊大醉}
+      - enTitle: Sidecar
+        zhTitle: 側車
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735036421/mcorpdzd5lmlcynrfeaf.jpg
+        method: |-
+          側車其實就是裝在機車側邊的座位，在許多電影中都可以看到。雖然現在加裝側車並不常見，但第一次世界大戰時因為它的高機動性而作為軍用非常流行，這杯調酒的名字就是源與這種交通工具。
+          側車的起源最常見的說法是在 20世紀初一戰時期，一位美國上尉在巴黎酒吧點了一杯白蘭地調酒，調酒師端出的調酒就是現在這杯側車。因為這位美國上尉每次到酒吧，都是乘坐著側車過來，因此調酒師便以「側車」命名。
+          側車就像許多古老的經典調酒，真實創作出它的調酒師早已不可考，就連是否最早發源於巴黎，也不是十分確定。有些調酒書寫說最早的側車其實是出現在倫敦，但也有些人認為是在巴黎大受歡迎後才傳入倫敦。
+        baseWines: [Brandy, Others]
+        materials:
+          - name: 白蘭地
+            quantity: 50ml
+          - name: 橙酒
+            quantity: 20ml
+          - name: 檸檬汁
+            quantity: 20ml
+        combination: {mood: 煩悶, taste: 甜, tone: 暖, drunk: 微酣}
+      - enTitle: Between the sheets
+        zhTitle: 床笫之間
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735037555/vvghccjojci0y6kqmtxr.jpg
+        method: |-
+          介紹這杯調酒之前，先提醒一下這句成語是唸床「笫ㄗˇ」之間，不是「第」，仔細看兩個字其實不一樣。
+          Between the Sheets這杯雞尾酒的歷史脈絡支離破碎，沒有人百分之百確定其起源。不過早在1929年，美國就有記載名為Between the Sheets的酒譜，但使用的是一份琴酒、一份百加得蘭姆酒、一份君度橙酒並搖盪冷卻。
+          因此Between the Sheets實際可能是1920年左右在美國發明，並傳到歐洲去的調酒，而Harry MacElhone較有可能只是將琴酒換為白蘭地而已。
+        baseWines: [Brandy, Rum, Others]
+        materials:
+          - name: 白色蘭姆酒
+            quantity: 30ml
+          - name: 干邑白蘭地
+            quantity: 30ml
+          - name: 橙酒
+            quantity: 30ml
+          - name: 檸檬汁
+            quantity: 20ml
+        combination: {mood: 普通, taste: 酸, tone: 暖, drunk: 酩酊大醉}
+      - enTitle: Horse’s Neck
+        zhTitle: 馬頸
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735038787/eqf8wyeckgqf9xzwcshg.jpg
+        method: |-
+          Horse’s Neck 是一款歷史悠久的飲品，最初是在 1890 年代開始流傳，原始除了少量苦精外不含任何酒精，純粹以薑汁汽水、安格式苦精與招牌螺旋檸檬皮為主，是一款清爽的無酒精飲料。之後約莫19世紀初，開始有醉漢在Horse’s Neck裡頭加入白蘭地或威士忌等，並稱之為「踹一腳馬頸（Horse’s Neck with a Kick）」或「馬硬頸（Stiff Horse’s Neck）」。
+          這是一款非常適合初夏的調酒，能喝到薑汁啤酒的微辛辣感、檸檬酸香與成熟干邑風味，清爽中又帶有厚度，非常舒爽；在眾多調酒中，它非常好辨認，因為杯中會出現一整圈削好的萊姆皮，不只帶來更多苦味層次，也和酒名有呼應趣味！
+        baseWines: [Brandy, Others]
+        materials:
+          - name: 干邑白蘭地
+            quantity: 50ml
+          - name: 薑汁啤酒/汽水
+            quantity: 120ml
+          - name: 安格式苦精
+            quantity: 1滴
+          - name: 檸檬皮
+            quantity: 1串
+        combination: {mood: 沉重, taste: 苦, tone: 暖, drunk: 微酣}
+      - enTitle: Tom & Jerry
+        zhTitle: 湯姆與傑利
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735038914/z5gdupyglgefvm0vhzdi.jpg
+        method: |-
+          說到湯姆與傑利，就會想到卡通節目－湯姆貓與傑利鼠，不過今天要講的是湯姆與傑利 Tom and Jerry 熱調酒，他是美國聖誕節的傳統調酒。
+          從感恩節一直到跨年夜的寒冬，在美國中西部地區的人們習慣喝一杯「湯姆和傑瑞 Tom and Jerry」暖暖胃。
+        baseWines: [Brandy]
+        materials:
+          - name: 白蘭地
+            quantity: 30ml
+          - name: 蛋白
+            quantity: 1顆
+          - name: 砂糖
+            quantity: 1匙
+          - name: 奶油
+            quantity: 適量
+          - name: 熱牛奶
+            quantity: 適量
+          - name: 熱水
+            quantity: 適量
+        combination: {mood: 煩悶, taste: 酸, tone: 暖, drunk: 微酣}
+      - enTitle: Champs-Élysées
+        zhTitle: 香榭大道
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735039011/bnvyjw2g5ciindulfput.jpg
+        method: |-
+          如果你喜歡Sidecar也愛草本味的話，那你絕對要試試今天這杯調酒「香榭大道Champs-élysées」。香榭大道可以說是Sidecar的變奏版本，既然叫這個名字，當然和法國緊密相連，這款調酒使用了干邑白蘭地和綠夏翠絲兩款法國酒，帶有著濃厚的法蘭西風情。
+          以搖盪法調製，柑橘皮油與裝飾可以自行選擇。比起果香充足的Sidecar，夏翠絲加上安格式苦精會帶來相當深邃草本與大地木質調，會是草本人的最愛，如果非常喜歡大地氣息，也可以調高安格式苦精的量，成品絕對不會讓你失望！
+        baseWines: [Brandy, Others]
+        materials:
+          - name: 干邑白蘭地
+            quantity: 60ml
+          - name: 檸檬汁
+            quantity: 20ml
+          - name: 綠夏翠絲
+            quantity: 15ml
+          - name: 糖漿
+            quantity: 5ml
+          - name: 安格式苦精
+            quantity: 2滴
+        combination: {mood: 普通, taste: 甜, tone: 暖, drunk: 微酣}
+      - enTitle: Vieux Carré
+        zhTitle: 老廣場
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735039180/uim0bkfk1qnlnhg1ejbr.jpg
+        method: |-
+          Vieux Carrè 是眾多文化融合下的產物了，它可以說是有著美、義、法三國血統的混血兒，Vieux Carrè(老廣場) 來自美國的紐奧良。
+          紐奧良最早期法國人定居於此，後來美國把這裡買了回來，義大利移民和本土美國人陸續在這落地生根，此外臨近的墨西哥灣、加勒比島國的各類人，也會在此聚集，所謂地靈人傑的好條件都在這了。
+          Vieux Carrè(老廣場) 裏頭就集結了這眾多文化的美味於一身，美國的黑麥威士忌、法國的干邑白蘭地、義大利的苦艾酒、加勒比島國的苦精等。
+        baseWines: [Whisky, Brandy, Others]
+        materials:
+          - name: 裸麥威士忌
+            quantity: 30ml
+          - name: 白蘭地
+            quantity: 30ml
+          - name: 甜味(紅)苦艾酒
+            quantity: 30ml
+          - name: 班尼迪克汀
+            quantity: 1bsp
+          - name: 貝喬苦精
+            quantity: 2滴
+          - name: 柳橙皮
+            quantity: 1/8片
+        combination: {mood: 沉重, taste: 苦, tone: 暖, drunk: 酩酊大醉}
+      - enTitle: Mojito
+        zhTitle: 莫希多
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735051685/dxcfdp0uz1zcdx0nyr9g.jpg
+        method: |-
+          Mojito 的前身是一款名為 El Draque 有醫療功效的調酒，El Draque 命名來自英國一位爵士Sir Francis Drake，他是伊莉莎白女王一世授權出航且當時最有名的航海探險家，因為航海技術之高與試圖挑釁登陸西班牙版圖次數之多。
+          據說當時，他有許多的士兵得到了痢疾與壞血病，在苦無醫療資源下，獲得了古巴原住民的協助，為他們調製了一款含有薄荷、檸檬、甘蔗糖以蘭姆酒做基底，可以減緩腸胃不適、補充維生素C改善壞血症狀，這款調酒象徵Sir Drake的艦隊，也被命名為 El Draque。
+        baseWines: [Rum]
+        materials:
+          - name: 白蘭姆酒
+            quantity: 45ml
+          - name: 檸檬汁
+            quantity: 20ml
+          - name: 砂糖
+            quantity: 2茶匙
+          - name: 薄荷葉
+            quantity: 8片
+          - name: 蘇打水
+            quantity: 適量
+        combination: {mood: 愉悅, taste: 甜, tone: 冷, drunk: 微酣}
+      - enTitle: Blue Hawaii
+        zhTitle: 藍色夏威夷
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735051899/yv9ntthgay4ldqhcn2b1.jpg
+        method: |-
+          藍色的酒體、滿滿的碎冰，可能還會有個小紙傘裝飾，椰奶與鳳梨汁的香甜口感加上夏威夷的名字讓這杯調酒熱帶感十足。
+          藍色夏威夷是由調酒師 Harry K.Yee 在 1957年所發明，當時他在夏威夷 Waikiki的希爾頓度假村中擔任首席調酒師。當時他之所以會發明這杯調酒，是受到荷蘭酒商Bols 邀約，請他為 Bols旗下的藍柑橘酒設計一款酒譜，因而誕生出經典的「藍色夏威夷」。
+        baseWines: [Vodka, Rum, Others]
+        materials:
+          - name: 蘭姆酒
+            quantity: 20ml
+          - name: 伏特加
+            quantity: 20ml
+          - name: 藍柑橘酒
+            quantity: 15ml
+          - name: 鳳梨汁
+            quantity: 90ml
+          - name: 酸甜汁
+            quantity: 30ml
+        combination: {mood: 煩悶, taste: 甜, tone: 冷, drunk: 酩酊大醉}
+      - enTitle: Jungle Bird
+        zhTitle: 叢林鳥
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735052006/lrff2bufw1we7qvjppax.jpg
+        method: |-
+          提到Tiki或熱帶雞尾酒，風靡全球50年的叢林鳥Jungle Bird一定是代表之一。叢林鳥 Jungle Bird在Tiki雞尾酒中也非常特別，特別加入了帶苦味的Campari，當中的葡萄柚與鳳梨、蘭姆酒完美結合，帶來了豐富的味道。
+        baseWines: [Rum, Others]
+        materials:
+          - name: 深色蘭姆酒
+            quantity: 30ml
+          - name: 金巴利香甜酒
+            quantity: 30ml
+          - name: 新鮮鳳梨汁
+            quantity: 90ml
+          - name: 萊姆汁
+            quantity: 15ml
+          - name: 糖漿
+            quantity: 15ml
+        combination: {mood: 沉重, taste: 酸, tone: 暖, drunk: 微酣}
+      - enTitle: Hurricane
+        zhTitle: 颶風
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735052381/nvgjoufklmq3xhf6p4z3.jpg
+        method: |-
+          這杯調酒的命名由來，有一說它是改編自1939年紐約世界博覽會中，一間名為「Hurricane Bar」推出的調酒。另外最常見的說法則是來自它使用的杯子，這種特別的大杯型就叫做「颶風杯 Hurricane glass」。
+          將所有材料加入雪克杯中，搖盪完成後倒入颶風杯中，補滿碎冰就完成了。基本上這杯調酒就是一堆蘭姆酒加上水果調製而成。
+          另外颶風的另一必不可少的就是「百香果糖漿」，這種糖漿是一種還混有些許莓果味的紅色糖漿，因此這杯調酒才會呈現出橘紅色。
+        baseWines: [Rum, Others]
+        materials:
+          - name: 白色蘭姆酒
+            quantity: 60ml
+          - name: 深色蘭姆酒
+            quantity: 60ml
+          - name: 萊姆汁
+            quantity: 30ml
+          - name: Fassionola 百香果糖漿
+            quantity: 60ml
+          - name: 糖漿
+            quantity: 少許
+          - name: 紅石榴糖漿
+            quantity: 1barspoon
+        combination: {mood: 沉重, taste: 甜, tone: 暖, drunk: 微酣}
+      - enTitle: Daiquiri
+        zhTitle: 黛綺莉
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735052497/qloyixu3l8vagazakzhr.jpg
+        method: |-
+          以蘭姆酒為基底，黛綺莉 Daiquiri如白玉般清透的酒液，搭配上微酸甜的口感，看似無害，後勁卻十分強烈！
+          黛綺莉擁有眾多夢幻中文譯名的 Daiquiri，背後的起源卻充滿了十足的男子氣概，據說是由一位在古巴南部
+          Daiquiri 礦區工作的美國工程師 Jennings S.Cox所創作而成。由於當地氣候炎熱，加上礦場工人們必須長時間在密不透風的環境下工作，揮汗如雨十分難受。於是他們想了一個方法，將古巴人的標準配備──蘭姆酒與隨手可得的綠色檸檬、糖全部加在一起，搖晃均勻後，一杯能夠幫助消暑以及提振精神的飲品，就這麼誕生了。
+        baseWines: [Rum]
+        materials:
+          - name: 白色蘭姆酒
+            quantity: 45ml
+          - name: 青檸汁
+            quantity: 25ml
+          - name: 糖漿
+            quantity: 15ml
+        combination: {mood: 沉重, taste: 甜, tone: 冷, drunk: 微酣}
+      - enTitle: Mai Tai
+        zhTitle: 邁泰
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735052603/ayxvadx6czrph34cwjtq.jpg
+        method: |-
+          世界上調酒萬萬種，在天氣漸熱的最近，一杯熱帶水果風情的 Tiki調酒肯定是大家的最愛。
+          是誰創作了邁泰這杯調酒？一位是維克多 · 柏傑隆Victor J. Bergeron 說是在 1944年發明的，另一位則是他的「青梅竹馬」唐·畢奇 Donn Beach號稱在 1933 年先創作的。
+        baseWines: [Rum, Others]
+        materials:
+          - name: 白蘭姆酒
+            quantity: 30ml
+          - name: 高年份蘭姆酒
+            quantity: 30ml
+          - name: 庫拉索柑橘酒
+            quantity: 15ml
+          - name: 杏仁糖漿
+            quantity: 15ml
+          - name: 檸檬汁
+            quantity: 適量
+        combination: {mood: 煩悶, taste: 酸, tone: 暖, drunk: 酩酊大醉}
+      - enTitle: Tequila Sunrise
+        zhTitle: 龍舌蘭日出
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735052689/e1w3okgrts1l5nwhxcrx.jpg
+        method: |-
+          龍舌蘭日出 Tequila Sunrise也稱作「特基拉日出」，各式派對上都能夠看見他的身影，在台灣的夜店之中，龍舌蘭日出與螺絲起子可以說是果汁類型的調酒雙煞，酸酸甜甜的果汁喝的不僅順口，卻也保留住了龍舌蘭獨特的味道。
+        baseWines: [Tequila]
+        materials:
+          - name: 龍舌蘭
+            quantity: 45ml
+          - name: 柳橙汁
+            quantity: 100ml
+          - name: 紅石榴糖漿
+            quantity: 10ml
+        combination: {mood: 普通, taste: 甜, tone: 暖, drunk: 酩酊大醉}
+      - enTitle: Margarita
+        zhTitle: 瑪格麗特
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735052787/pwuqvdsxxkjkcbvkjwly.jpg
+        method: |-
+          瑪格麗特絕對是龍舌蘭調酒經典中的經典、霸主中的霸主，就算是不熟悉調酒的朋友，可能也都聽過這杯調酒。瑪格麗特基礎材料就是由龍舌蘭、柑橘酒和檸檬三種元素組成，許多經典調酒都是由「基酒+柑橘酒+酸」調製而成。
+        baseWines: [Tequila, Others]
+        materials:
+          - name: 龍舌蘭
+            quantity: 35ml
+          - name: 橙酒
+            quantity: 20ml
+          - name: 萊姆汁
+            quantity: 15ml
+        combination: {mood: 普通, taste: 酸, tone: 冷, drunk: 酩酊大醉}
+      - enTitle: Siesta
+        zhTitle: 午睡
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735052885/nlfzroak39hmai9typqz.jpg
+        method: |-
+          這杯午睡調酒 Siesta 就可以當作睡前飲品，使用葡萄柚汁，以及肯巴利苦酒 Campari ，兩種比較偏苦的材料再加上檸檬汁調味，帶出來就是一股酸澀的爽感，如果想要酒體更柔順一點，也可以配上一點糖漿。
+        baseWines: [Tequila, Others]
+        materials:
+          - name: 龍舌蘭
+            quantity: 45ml
+          - name: 葡萄柚汁
+            quantity: 45ml
+          - name: 肯巴利酒
+            quantity: 15ml
+          - name: 檸檬汁
+            quantity: 15ml
+        combination: {mood: 愉悅, taste: 甜, tone: 暖, drunk: 酩酊大醉}
+      - enTitle: Mocking Bird
+        zhTitle: 仿聲鳥
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735052967/kgem6ohqfd2vf68ojwcq.jpg
+        method: |-
+          這款調酒是源自1960年的知名小說「To kill a mocking bird」，其中探討包含種族議題、同理心及社會階級、歧視等問題。
+          從此以後，便成為許多調酒師的創作發想來源，因此有許多版本的mocking bird，最主流是由龍舌蘭搭配上綠薄荷香甜酒、萊姆汁搖蕩而成。
+        baseWines: [Tequila, Others]
+        materials:
+          - name: 銀色龍舌蘭
+            quantity: 60ml
+          - name: 薄荷酒
+            quantity: 10ml
+          - name: 檸檬汁
+            quantity: 15ml
+          - name: 糖漿
+            quantity: 10ml
+        combination: {mood: 煩悶, taste: 甜, tone: 冷, drunk: 微酣}
+      - enTitle: Paloma
+        zhTitle: 帕洛瑪
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735053067/buqzxg1uc1xcrc5v8abo.jpg
+        method: |-
+          帕洛瑪 Paloma ，是一杯使用葡萄柚汁的龍舌蘭調酒，有點像是加了果汁的 Fizz 做法，杯口抹上一層鹽巴做鹽口。要使用白葡萄柚汁或是紅葡萄柚汁都可以。
+          西班牙語意為"白鴿"，只要看一眼，就可以深深感受到鮮嫩的氣息，天氣炎熱，不妨試試這款墨西哥風味的調酒吧。
+        baseWines: [Tequila]
+        materials:
+          - name: 龍舌蘭
+            quantity: 50ml
+          - name: 檸檬汁
+            quantity: 5ml
+          - name: 葡萄柚氣泡水
+            quantity: 100ml
+          - name: 鹽口
+            quantity: 裝飾
+        combination: {mood: 煩悶, taste: 甜, tone: 暖, drunk: 酩酊大醉}
+      - enTitle: Rosita
+        zhTitle: 蘿西塔
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735053164/w35lw2wf8cgupgomwrrd.jpg
+        method: |-
+          羅西塔是一杯很神祕的調酒，幾乎可以說是沒有人知道它的來龍去脈，唯一的線索，是在1988年版的《波士頓先生官方調酒師指南》當中，收錄記載了這一杯酒～調製方式與特色和尼克羅尼十分相似。
+          神祕的羅西塔在金巴利的苦味襯托下，龍舌蘭的香味整個會被烘托出來，像是一團煙霧在口裡卷著，苦中帶香，喝起來相當過癮，沒嚐試過的朋友肯定要來一杯。
+        baseWines: [Tequila, Others]
+        materials:
+          - name: 龍舌蘭
+            quantity: 45ml
+          - name: 甜苦艾酒
+            quantity: 15ml
+          - name: 不甜苦艾酒
+            quantity: 15ml
+          - name: 金巴利
+            quantity: 15ml
+          - name: 苦精
+            quantity: 1 dash
+        combination: {mood: 煩悶, taste: 苦, tone: 暖, drunk: 酩酊大醉}
+      - enTitle: Long Island Iced Tea
+        zhTitle: 長島冰茶
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735053510/tq1qvriokvbvnh3c7xah.jpg
+        method: |-
+          在1920年代美國禁酒令時期，我們的主人翁Old Man Bishop將所剩的酒尾做了調和，琥珀般的顏色與凍茶相似，巧妙地用 Long Island Iced Tea這個名子掩人耳目，這款酒就以「茶飲」的方式一炮而紅。
+          Long Island Iced Tea酒精濃度大概在30度，但裡頭多重混酒，這才是讓人容易喝掛的主因。但相對的你會先喝到可樂的甜和檸檬的果香，其中柑橘酒混著檸檬香實在濃郁，接著其餘各款基酒的風味才慢慢發酵，通常意識的酒味時，都是搖頭晃腦的狀態了。
+        baseWines: [Vodka, Gin, Rum, Tequila, Others]
+        materials:
+          - name: 伏特加
+            quantity: 15ml
+          - name: 琴酒
+            quantity: 15ml
+          - name: 龍舌蘭
+            quantity: 15ml
+          - name: 蘭姆酒
+            quantity: 15ml
+          - name: 君度橙酒
+            quantity: 15ml
+          - name: 糖漿
+            quantity: 20ml
+          - name: 檸檬汁
+            quantity: 30ml
+          - name: 可樂
+            quantity: 適量
+          - name: 檸檬片
+            quantity: 裝飾
+        combination: {mood: 愉悅, taste: 甜, tone: 冷, drunk: 酩酊大醉}
+      - enTitle: Jager Bomb
+        zhTitle: 野格炸彈
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735054184/br5cr49ifmgn3li2qbmm.jpg
+        method: |-
+          野格酒的全名是 Jägermeister，在德文 Jäger 是獵人、meister是大師的意思。野格的發明者Curt Mast就是一位興趣使然的獵人，此外他當初瞄準的客群也是跟他一樣的喜愛狩獵的人，才會以Jägermeister 來命名這款酒。
+          混合其他材料的喝法中，最知名的當然就是「野格炸彈」。像是啤酒炸彈一樣的喝法，先準備一個shot 杯與 highball 杯。在 shot 杯中裝滿野格，highball杯中加入氣泡飲料（通常野格都搭配紅牛）。最後把 shot 杯投入highball杯中再一飲而盡。比例的話通常是1個shot的野格，搭配半杯的氣泡飲料。
+          這種喝法尤其在派對中受歡迎，但要特別注意，因為紅牛是提神飲料，會讓人感覺還能喝更多酒，而導致飲酒過量。連在野格官網上，都建議野格炸彈使用啤酒而非能量飲料。
+        baseWines: [Others]
+        materials:
+          - name: 野格利口酒
+            quantity: 50ml
+          - name: 紅牛能量飲
+            quantity: 200ml
+        combination: {mood: 普通, taste: 苦, tone: 暖, drunk: 酩酊大醉}
+      - enTitle: Blue Monday
+        zhTitle: 藍色星期一
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735055655/hpoowvzvlhlucifgrifr.jpg
+        method: |-
+          對於星期一的憂鬱焦慮，Monday Blue「藍色星期一」意指人類在星期一總會感到特別憂鬱，心情亦比較低落。
+          在這鬱悶的日子裡，校園穿梭著一對一對的情侶，似乎是在慶祝什麼，是在慶祝週末的結束?抑或者在慶祝著這一周繁忙的開始?
+          原始酒譜有添加苦精，或許就是想更明白更確切表達這難過的日子，但這也是成熟的味道，暈頭轉向後，還是得面對現實的苦、壓力。
+        baseWines: [Vodka, Others]
+        materials:
+          - name: 伏特加
+            quantity: 15ml
+          - name: 君渡橙酒
+            quantity: 15ml
+          - name: 藍柑橘酒
+            quantity: 7.5ml
+        combination: {mood: 煩悶, taste: 酸, tone: 冷, drunk: 酩酊大醉}
+      - enTitle: Around the World
+        zhTitle: 環遊世界
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735055826/jseahxeam6byf8cm1mkh.jpg
+        method: |-
+          與「長島冰茶」並稱調酒界兩大失身酒的「環遊世界」，顧名思義就是喝了會快樂似神仙，出現彷彿在遊覽世界各國的幻覺。幾乎將琴酒、伏特加、龍舌蘭、威士忌、萊姆酒等基酒通通用上，還加入了些許鳳梨汁、橙汁調味，可以說是各種酒類液體的大雜燴，外觀時常呈現奇異的藍色或綠色，每家店調製的味道不盡相同，不過都具有讓你「一杯就醉倒」的強勁威力。
+        baseWines: [Vodka, Whisky, Gin, Brandy, Rum, Tequila, Others]
+        materials:
+          - name: 伏特加
+            quantity: 15ml
+          - name: 琴酒
+            quantity: 15ml
+          - name: 蘭姆酒
+            quantity: 15ml
+          - name: 龍舌蘭
+            quantity: 15ml
+          - name: 威士忌
+            quantity: 15ml
+          - name: 白蘭地
+            quantity: 15ml
+          - name: 杏仁利口酒
+            quantity: 15ml
+          - name: 藍柑橘利口酒
+            quantity: 5ml
+          - name: 糖漿
+            quantity: 15ml
+          - name: 鳳梨汁
+            quantity: 45ml
+          - name: 柳橙汁
+            quantity: 45ml
+          - name: 檸檬汁
+            quantity: 20ml
+        combination: {mood: 普通, taste: 苦, tone: 冷, drunk: 酩酊大醉}
+      - enTitle: B52
+        zhTitle: 轟炸機
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735055908/dxh0njgpmmf6qk6kw6di.jpg
+        method: |-
+          B52的源起不是相當明確，較為可信的說法是 1977 年由調酒師Peter Fich在加拿大班夫溫泉酒店中所發明的。但和許多人想像的不一樣，B52雖然是轟炸機的名字，但 Peter Fich 並不是用轟炸機來為這杯shot 命名。
+          B52除了視覺效果外，其實調製上也是蠻有樂趣的，調製完後有些人會在上面點火，更有轟炸機的感覺，有些人更會在點火後直接就口尻掉，或插著吸管一口吸乾，但是絕對不建議這樣做。
+        baseWines: [Others]
+        materials:
+          - name: 咖啡酒
+            quantity: 15ml
+          - name: 愛爾蘭奶油酒
+            quantity: 15ml
+          - name: 柑橘酒
+            quantity: 15ml
+        combination: {mood: 沉重, taste: 酸, tone: 暖, drunk: 酩酊大醉}
+      - enTitle: Adios MotherFucker
+        zhTitle: 再見
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735056024/v13cldfwtsngemly2lg5.jpg
+        method: |-
+          Adios MotherFucker簡稱AMF，Adios是西班牙語再見的意思，而且這款調酒除了再見還加了一串髒話，就可以想像是一款怎樣的調酒。表面上看起來很無害、漂亮，淡淡的藍色，像海又似天空，喝起來的口感也很好，不會有燒喉或嗆喉的感覺，但實際上酒精濃度超級高。
+          他是長島冰茶的兄弟，很美，看起來無害，實際上是大量烈酒混酒就是殺手級的KO酒，酒精量等於喝了五杯烈酒SHOT。
+        baseWines: [Vodka, Gin, Rum, Tequila, Others]
+        materials:
+          - name: 伏特加
+            quantity: 15ml
+          - name: 蘭姆酒
+            quantity: 15ml
+          - name: 琴酒
+            quantity: 15ml
+          - name: 龍舌蘭
+            quantity: 15ml
+          - name: 藍柑橘香甜酒
+            quantity: 15ml
+          - name: 酸甜果汁
+            quantity: 60ml
+          - name: 雪碧
+            quantity: 適量
+        combination: {mood: 沉重, taste: 酸, tone: 冷, drunk: 酩酊大醉}
+      - enTitle: Absinthe
+        zhTitle: 艾碧斯
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735056249/tczo1uz8nmlswguum69x.jpg
+        method: |-
+          艾碧斯的主要配方是在1792年，由一位瑞士醫生Pierre Ordinaire發明的，他以苦艾、茴芹、茴香為主要原料，配上八角、當歸、肉豆蔻等藥用植物蒸餾成烈酒，作為醫治腸胃病的藥物，後來更被法國軍醫納入為伴隨軍隊征戰北非的配給藥物，主要用作預防發燒、治療痢疾及潔淨飲用水。
+          王爾德是這麼形容喝艾碧斯的感受：「第一階段跟喝平常酒一樣，第二階段你開始發現這世界的殘酷，第三階段你可以看到所有你想看到的美好事物。」
+          將艾碧斯匙平放在杯上，將一顆方糖放在艾碧斯匙上，以90ml冰水慢慢澆在方糖上令它溶解，最後將艾碧斯匙連同剩餘的方糖浸入杯內攪勻。
+        baseWines: [Others]
+        materials:
+          - name: 艾碧斯
+            quantity: 30ml
+          - name: 方糖
+            quantity: 1塊
+          - name: 冰水
+            quantity: 90ml
+        combination: {mood: 普通, taste: 甜, tone: 冷, drunk: 酩酊大醉}
+      - enTitle: Dark 'N' Stormy
+        zhTitle: 黑色風暴
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735056347/gw8rkkyusbsn8pvyvl9l.jpg
+        method: |-
+          據說，月黑風高這杯調酒是在第一次世界大戰時的百慕達發明的，當時的英國海軍在船上胡搞瞎搞，一不小心就做出了一杯深色蘭姆酒＋薑汁啤酒的調酒，因為顏色很像暴風雨前的雲層，於是就取名為 Dark Stormy。
+          這是一款超冷門但保證超中的調酒，酒體厚實的深色蘭姆酒濃郁的風味加上薑汁汽水，一口飲下只有爽！
+        baseWines: [Rum]
+        materials:
+          - name: 深色蘭姆酒
+            quantity: 60ml
+          - name: 薑汁汽水
+            quantity: 100ml
+          - name: 檸檬角
+            quantity: 1片
+        combination: {mood: 普通, taste: 甜, tone: 冷, drunk: 微酣}
+      - enTitle: Zombie
+        zhTitle: 殭屍
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735056514/zzg9dwusk7ipie24zmwx.jpg
+        method: |-
+          Zombie是由Donn Beach所發明，他在自己的餐廳酒吧中發明了這杯調酒。
+          據說有位客人希望Donn Beach調杯酒來解宿醉，因此誕生出了這杯調酒。事後這位客人表示喝完這杯酒讓他就像是個殭屍一樣，可見這杯調酒的威力之強大，也因此DonnBeach也限制店內的客人最多只能點兩杯Zombie。
+          以大量的蘭姆酒為特色，加入了豐富的風味糖漿和果汁，呈現出新鮮濃郁的水果風味。這些調酒看似無害，但酒精含量高，容易讓人不經意間陷入醉酒之中。
+        baseWines: [Rum, Others]
+        materials:
+          - name: 高濃度蘭姆酒
+            quantity: 30ml
+          - name: 白蘭姆酒
+            quantity: 45ml
+          - name: 香料蘭姆酒
+            quantity: 20ml
+          - name: 法式茴香酒
+            quantity: 4滴
+          - name: 費勒南糖漿
+            quantity: 15ml
+          - name: 鳳梨汁
+            quantity: 60ml
+          - name: 葡萄柚汁
+            quantity: 15ml
+          - name: 檸檬汁
+            quantity: 15ml
+          - name: 紅石榴糖漿
+            quantity: 1茶匙
+        combination: {mood: 沉重, taste: 甜, tone: 暖, drunk: 酩酊大醉}
+      - enTitle: Corpse Reviver Number1
+        zhTitle: 亡者復甦1號
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735056593/d0nyexa3drq0p44xaey3.jpg
+        method: |-
+          這杯酒最一開始的起源，首次被記載下來的時間點及著作是於1871年，由E.Ricket and C.Thomas共同編輯的調酒書籍。
+          亡者復甦是曼哈頓類型的調酒，大量的白蘭地、蘋果白蘭地還有香艾酒，會讓這杯酒的酒體更厚實、飽滿。
+        baseWines: [Brandy, Others]
+        materials:
+          - name: 白蘭地
+            quantity: 30ml
+          - name: 蘋果白蘭地
+            quantity: 30ml
+          - name: 甜香艾酒
+            quantity: 30ml
+        combination: {mood: 沉重, taste: 甜, tone: 冷, drunk: 酩酊大醉}
+      - enTitle: Death in the Gulf Stream
+        zhTitle: 灣流中死亡
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735056711/mp5qevrfzhxq9wfckmaa.jpg
+        method: |-
+          這杯調酒大家可能都沒有聽過，但是說到這杯調酒的愛好者大家就熟悉了，那就是大文學家兼酒鬼－海明威 Hemingway，時常客串在各種調酒故事中的他，今天又再次出現，這杯灣流中的死亡算是夏日解渴類型的調酒。
+        baseWines: [Others]
+        materials:
+          - name: 杜松子酒
+            quantity: 60ml
+          - name: 萊姆汁
+            quantity: 30ml
+          - name: 甘蔗糖漿
+            quantity: 15ml
+          - name: 安格氏苦精
+            quantity: 4 dash
+          - name: 檸檬
+            quantity: 1片
+        combination: {mood: 愉悅, taste: 酸, tone: 冷, drunk: 酩酊大醉}
+      - enTitle: Horsefeather
+        zhTitle: 馬羽
+        image: https://res.cloudinary.com/dh7qkvlwr/image/upload/v1735056807/yzfunjiktybkh729vgm3.jpg
+        method: |-
+          馬羽 Horsefeather 是一杯發明於 1990 年代堪薩斯州的威士忌調酒，以說是經典調酒馬頸 Horse’s Neck 的兄弟（白蘭地＋薑汁啤酒）、莫斯科騾子 Moscow Mule的進化版（伏特加＋薑汁汽水），而馬羽調酒則是使用黑麥威士忌加上薑汁啤酒。
+        baseWines: [Whisky, Others]
+        materials:
+          - name: 黑麥威士忌
+            quantity: 45ml
+          - name: 薑汁啤酒
+            quantity: 120ml
+          - name: 安格氏苦精
+            quantity: 3 dash
+          - name: 檸檬汁
+            quantity: 少許
+        combination: {mood: 愉悅, taste: 苦, tone: 暖, drunk: 微酣}

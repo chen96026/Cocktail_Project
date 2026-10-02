@@ -1,65 +1,36 @@
 ================================================================================
 Cocktail 專案待做事項
-最後更新：2026-09-18
+最後更新：2026-10-02
 ================================================================================
 
 
 ################################################################################
-# 主線：把資料搬到 YAML，讓專案不用連 MySQL 也能跑
+# 主線：把資料搬到 YAML，讓專案不用連 MySQL 也能跑 —— 已完成（2026-10-02）
 ################################################################################
 
-## 目標
-
-現在啟動後端一定要有 MySQL，資料綁在特定一台筆電上，換電腦就跑不起來。
-改成「YAML 當資料的唯一真實來源 + H2 記憶體資料庫」之後：
+## 現在的運作方式
 
     git clone → mvn spring-boot:run → 資料自動長回來
 
-不用裝 MySQL、不用匯資料、不用改 config。
+- 預設 profile：H2 記憶體資料庫，啟動時 DataSeeder 讀 src/main/resources/seed-data.yaml 載入
+- mysql profile：mvn spring-boot:run -Dspring-boot.run.profiles=mysql
+  連本機 MySQL（設定在 application-mysql.properties），不載入 YAML
+- 圖片維持 Cloudinary，新增酒譜上傳圖片時需要網路 + 金鑰
 
 
-## 採用方案
+## 決定紀錄
 
-H2 in-memory + YAML 種子資料（不是拿掉 JPA 自己寫記憶體儲存）。
-
-理由：Entity / Repository / Service / Controller 全部不用動，JPQL 也照跑，
-新增編輯刪除都正常運作。要換回 MySQL 只是切一個 Spring profile。
-
-
-## 待決定（開工前先想清楚）
-
-[ ] 1. 新增 dependency：com.h2database:h2（runtime scope）—— 確認要加
-[ ] 2. 匯出功能要「只給 curl 端點」還是「Admin 後台加一顆按鈕」
-[ ] 3. Cloudinary 要不要也做 local 版（圖片改存 public/img/ 回傳相對路徑），
-       還是維持打雲端（需要網路 + 金鑰）
+1. H2 dependency：加（runtime scope，版本跟 Spring Boot BOM）
+2. 匯出功能：先不做，要改資料就直接改 YAML
+3. Cloudinary：維持雲端，不做 local 版
 
 
-## 實作順序（重要：先匯出再切換）
+## 初始資料來源
 
-在家那台有資料的電腦上，照這個順序做，就完全不需要手寫任何 SQL：
-
-[ ] Step 1. 先寫 exportSeed 端點，這時候還是連原本的 MySQL
-            → 讀出所有 recipe / material / basewine / combination
-            → 組成 YAML 寫到 src/main/resources/seed-data.yaml
-
-[ ] Step 2. 啟動後端（連 MySQL），打一次匯出：
-                curl -X POST http://localhost:8080/lastwine/exportSeed
-            → 現有資料就變成 seed-data.yaml 了，不用手動抄
-
-[ ] Step 3. 檢查 seed-data.yaml 內容正確（筆數、材料、四維度組合都有）
-
-[ ] Step 4. 加 h2 dependency，把 datasource 切成 H2 記憶體模式
-                spring.datasource.url=jdbc:h2:mem:cocktail
-                spring.jpa.hibernate.ddl-auto=create-drop
-            原本的 MySQL 設定移到 application-mysql.properties，用 profile 切
-
-[ ] Step 5. 寫 DataSeeder：啟動時讀 seed-data.yaml 塞進 H2
-            （@ConfigurationProperties 綁定 + CommandLineRunner）
-
-[ ] Step 6. 關掉 MySQL，確認 mvn spring-boot:run 還是跑得起來、資料都在
-
-[ ] Step 7. application.properties 裡的 MySQL 帳密可以整組拿掉了
-            （Cloudinary 金鑰除外，除非做了 local 圖片方案）
+由 2026-09-28 的 MySQL dump 直接轉成 seed-data.yaml
+- 48 杯酒 / 200 筆材料 / 93 筆基酒關聯 / 48 組四維度組合
+- 用 SnakeYAML 讀回逐欄比對 SQL 原始資料，零差異
+- 舊資料表 member（會員功能已移除）與未被使用的「待分配」組合沒有轉入
 
 
 ## seed-data.yaml 格式
@@ -70,89 +41,57 @@ cocktail:
       - enTitle: Screwdriver
         zhTitle: 螺絲起子
         image: https://res.cloudinary.com/<CLOUD_NAME>/image/upload/xxx.jpg
-        method: |
-          將冰塊放入杯中
-          倒入伏特加後補滿柳橙汁
+        method: |-
+          第一段介紹
+          第二段介紹
         baseWines: [Vodka]
         materials:
           - name: 伏特加
             quantity: 45ml
           - name: 柳橙汁
             quantity: 120ml
-        combination: {mood: 愉悅, taste: 酸, tone: 暖, drunk: 微酣}
+        combination: {mood: 普通, taste: 酸, tone: 暖, drunk: 微酣}
 
 說明：
 - 四維度組合直接內嵌在每杯酒下面，不用另外維護 combination_option
 - 沒有分配組合的酒譜，combination 那行省略即可
 - image 存 Cloudinary URL，換電腦照樣看得到圖
+- 基酒名稱要跟前端 constants/options.js 的 BASE_WINES value 一致
 
 
-## 日常工作流程（做完之後）
+## 日常工作流程
 
   啟動：     mvn spring-boot:run
 
-  新增一杯酒：
-    1. 網頁 /AddRecipeForm 填完送出 → 存進 H2 記憶體，畫面立刻看得到
-    2. 確定要留著 → curl -X POST http://localhost:8080/lastwine/exportSeed
-    3. git diff 看 seed-data.yaml 的變化
-    4. commit
+  新增 / 編輯 / 刪除酒譜、分配組合：
+    1. 直接改 seed-data.yaml
+    2. 重啟後端，畫面確認
+    3. commit
 
-  刪除 / 編輯 / 後台分配組合：一模一樣，改完 → 匯出 → commit
-
-  ※ 匯出是「整份快照」不是增量，所以不管做了什麼操作都是同一套動作
-  ※ 忘記匯出 → 重啟後回到 YAML 的狀態，等於白做工（這是本方案唯一的心智負擔）
-
-
-## 注意事項
-
-- exportSeed 寫的是 src/main/resources/，只有 mvn spring-boot:run
-  （工作目錄在專案根目錄）時有意義 → 這支端點只在 local profile 註冊，
-  打包成 jar 部署時不存在
-- H2 記憶體模式每次啟動重建，UI 上新增的資料不會自動寫回 YAML
-- 如果之後想要「不匯出也能保留」，可改 H2 檔案模式（jdbc:h2:file:./data/cocktail），
-  但那個 .mv.db 二進位檔要 commit 才能跨電腦，版本控管難看且無法 merge，不建議
+  ※ 網頁 UI 上的新增、編輯、刪除都能正常操作，但只存在 H2 記憶體，
+    重啟後回到 YAML 的狀態
+  ※ 新酒譜的圖片：先從網頁新增一次拿到 Cloudinary URL（或到 Cloudinary 後台上傳），
+    再把 URL 填進 YAML 的 image
 
 
-## 備案：如果不想先寫 exportSeed，要手動撈資料
+## 之後如果想做匯出
 
-資料表（由 JPA entity 推出，欄位名是 Hibernate 預設命名策略轉換後的結果）：
-
-  recipe            recipe_id, en_title, zh_title, method, image
-  material          material_id, material_name, material_quantity, recipe_id
-  basewine          base_wine_id, name
-  basewinelist      recipe_id, base_wine_id          (Recipe 與 BaseWine 的關聯表)
-  combinations      combination_id, mood, taste, tone, drunk
-  combination_option option_id, fk_recipe_id, fk_combination_id
-
-撈資料的 SQL：
-
-  SELECT r.recipe_id, r.en_title, r.zh_title, r.image, r.method,
-         c.mood, c.taste, c.tone, c.drunk
-  FROM recipe r
-  LEFT JOIN combination_option co ON co.fk_recipe_id = r.recipe_id
-  LEFT JOIN combinations c ON c.combination_id = co.fk_combination_id;
-
-  SELECT recipe_id, material_name, material_quantity FROM material ORDER BY recipe_id;
-
-  SELECT bl.recipe_id, bw.name
-  FROM basewinelist bl JOIN basewine bw ON bw.base_wine_id = bl.base_wine_id
-  ORDER BY bl.recipe_id;
-
-（method 欄位是 TEXT 會換行，貼出來的時候注意格式）
+- exportSeed 端點：讀 H2 全部資料 → 組成上面的 YAML 格式寫回 src/main/resources/seed-data.yaml
+- 只有 mvn spring-boot:run（工作目錄在專案根目錄）時有意義，打包成 jar 時不該註冊
+- 不建議改 H2 檔案模式（jdbc:h2:file:...），.mv.db 是二進位檔，版本控管難看且無法 merge
 
 
 ################################################################################
 # 其他已知待辦（依建議優先順序）
 ################################################################################
 
-[ ] 2. JDK 版本不一致 —— pom.xml 寫 java.version=21，這台筆電只有 JDK 17
-       目前程式碼沒用到 Java 21 專屬語法，所以：裝 JDK 21 或把 pom 降成 17
-       不處理的話 mvn spring-boot:run 會直接失敗
+[ ] 2. JDK 版本 —— 決定維持 java.version=21
+       這台筆電系統 JDK 是 17，mvn 需要指定 JDK 21 才能跑：
+       裝 JDK 21，或直接用 IntelliJ 內建的 JetBrains Runtime 21（JAVA_HOME 指過去即可）
 
-[ ] 5. 沒有任何測試
-       唯一的 contextLoads() 需要連 MySQL，實際跑不起來
-       （做完主線改用 H2 之後，這個測試就能跑了）
-       投報率最高的起點：@WebMvcTest + MockMvc 測 controller 層
+[ ] 5. 測試補齊
+       已有：contextLoads（改用 H2 後不用 MySQL 就能跑）、DataSeederTest、RecipeServiceTest
+       還缺：@WebMvcTest + MockMvc 測 controller 層
        重點涵蓋：新增酒譜的 multipart JSON part 綁定、404 行為、篩選器參數
 
 [ ] 6. Entity 的 getter/setter 樣板約 200 行
@@ -169,8 +108,19 @@ cocktail:
        （比較合理的版本：排除被別的調酒占用的組合，但保留自己目前那一個）
 
 [ ] 8. 設定檔分 profile
-       ddl-auto=update、show-sql=true、Swagger 永遠開著，適合拆 local / prod profile
-       （主線做完後 datasource 本來就要分 profile，可以一起處理）
+       datasource 已拆成預設（H2）/ mysql 兩個 profile
+       剩 show-sql=true、Swagger 永遠開著，可以再拆 local / prod
+
+
+################################################################################
+# 已完成（2026-10-02）
+################################################################################
+
+- 資料改由 seed-data.yaml + H2 記憶體資料庫提供，不用連 MySQL 也能啟動，
+  MySQL 設定移到 mysql profile
+- 修正刪除酒譜在 H2 上撞 FK 的錯誤：combination_option 補 @OnDelete(CASCADE)，
+  與 MySQL 既有 FK 的 ON DELETE CASCADE 一致
+- 新增 DataSeederTest、RecipeServiceTest
 
 
 ################################################################################
