@@ -1,4 +1,5 @@
 import RecipeDetailModal from "./RecipeDetailModal.jsx";
+import {IMAGE_WIDTH, toCloudinaryThumbnail} from "../utils/cloudinary.js";
 
 /**
  * 篩選器的結果展示
@@ -18,7 +19,12 @@ const SelectorResult = ({result, detail, onOpenDetail, onCloseDetail, onReset, o
                 <p>({result.zhTitle})</p>
             </div>
             <section>
-                {result.image && <img id="printImg" src={result.image} alt={result.enTitle}/>}
+                {result.image && (
+                    <img id="printImg"
+                         src={toCloudinaryThumbnail(result.image, IMAGE_WIDTH.result)}
+                         alt={result.enTitle}
+                         loading="lazy"/>
+                )}
             </section>
             <div id="print2">
                 <p id="print2" onClick={() => onOpenDetail(result.recipeId)}>詳細介紹</p>

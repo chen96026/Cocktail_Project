@@ -3,6 +3,7 @@ import {useNavigate} from "react-router-dom";
 import Swal from "sweetalert2";
 import RecipeDetailModal from "./RecipeDetailModal.jsx";
 import {deletedRecipe} from "../API/RecipeAPI";
+import {IMAGE_WIDTH, toCloudinaryThumbnail} from "../utils/cloudinary.js";
 
 /**
  * 調酒列表
@@ -52,7 +53,10 @@ const CocktailList = ({cocktails, onDeleted}) => {
         <section id="cocktaillistSection">
             {cocktails.map((cocktail) => (
                 <div id="cocktaillistDiv" key={cocktail.recipeId}>
-                    <img id="cocktaillistImg" src={cocktail.image} alt={cocktail.enTitle}/>
+                    <img id="cocktaillistImg"
+                         src={toCloudinaryThumbnail(cocktail.image, IMAGE_WIDTH.card)}
+                         alt={cocktail.enTitle}
+                         loading="lazy"/>
                     <p id="cocktaillistp"
                        onClick={() => setSelectedCocktail(cocktail)}>{cocktail.enTitle} ({cocktail.zhTitle})
                     </p>

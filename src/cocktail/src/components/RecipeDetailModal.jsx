@@ -1,5 +1,6 @@
 import {Fragment} from "react";
 import Modal from "./Modal.jsx";
+import {IMAGE_WIDTH, toCloudinaryThumbnail} from "../utils/cloudinary.js";
 
 /**
  * 調酒詳細介紹的彈窗，調酒列表與首頁篩選器共用
@@ -13,7 +14,7 @@ const RecipeDetailModal = ({isOpen, onClose, recipe}) => {
         <Modal isOpen={isOpen} onClose={onClose}>
             {recipe && (
                 <div className="modalSmallDiv">
-                    <img src={recipe.image} alt={recipe.enTitle}/>
+                    <img src={toCloudinaryThumbnail(recipe.image, IMAGE_WIDTH.modal)} alt={recipe.enTitle}/>
                     <h2>{recipe.enTitle} ({recipe.zhTitle})</h2>
                     <section className="modalMaterial">
                         <div className="materialDiv">材料:</div>
