@@ -8,8 +8,8 @@ import com.example.cocktail.Model.Recipe;
 import com.example.cocktail.Repository.CombinationOptionRepository;
 import com.example.cocktail.Repository.CombinationRepository;
 import com.example.cocktail.Repository.RecipeRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

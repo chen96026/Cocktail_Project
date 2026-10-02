@@ -3,11 +3,11 @@ package com.example.cocktail.Repository;
 import com.example.cocktail.DTO.CockTailDetailDTO;
 import com.example.cocktail.Model.CombinationOption;
 import com.example.cocktail.Model.Recipe;
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

@@ -11,13 +11,13 @@ import com.example.cocktail.Repository.CombinationRepository;
 import com.example.cocktail.Repository.RecipeRepository;
 import com.example.cocktail.Seed.SeedProperties.CombinationSeed;
 import com.example.cocktail.Seed.SeedProperties.RecipeSeed;
-import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -3,6 +3,7 @@ package com.example.cocktail.Service;
 import com.example.cocktail.DTO.MaterialDTO;
 import com.example.cocktail.DTO.RecipeDTO;
 import com.example.cocktail.DTO.RecipeRequest;
+import com.example.cocktail.Exception.BusinessException;
 import com.example.cocktail.Exception.NotFoundException;
 import com.example.cocktail.Model.BaseWine;
 import com.example.cocktail.Model.Material;
@@ -10,6 +11,7 @@ import com.example.cocktail.Model.Recipe;
 import com.example.cocktail.Repository.BaseWineRepository;
 import com.example.cocktail.Repository.RecipeRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -33,10 +35,13 @@ public class RecipeService {
     }
 
     /**
-     * @return 所有酒譜（含基酒）
+     * 材料、基酒靠 hibernate.default_batch_fetch_size 批次載入，不會逐筆查詢
+     *
+     * @return 所有酒譜（含沒有勾基酒的）
      */
+    @Transactional(readOnly = true)
     public List<RecipeDTO> getAllRecipes() {
-        return recipeRepository.findAllWithBaseWines().stream()
+        return recipeRepository.findAll().stream()
                 .map(RecipeDTO::from)
                 .toList();
     }
@@ -45,18 +50,29 @@ public class RecipeService {
      * @param baseWineList 基酒名稱清單，含 All 時回傳全部
      * @return 符合基酒條件的酒譜
      */
+    @Transactional(readOnly = true)
     public List<RecipeDTO> getRecipesByBaseWine(List<String> baseWineList) {
-        List<Recipe> recipes = baseWineList.contains("All")
-                ? recipeRepository.findAll()
-                : recipeRepository.findByMatchingBaseWines(baseWineList, baseWineList.size());
-        return recipes.stream().map(RecipeDTO::from).toList();
+        // All 跟 getAllRecipe 走同一條路徑，兩邊的「全部」結果一致
+        if (baseWineList.contains("All")) {
+            return getAllRecipes();
+        }
+        return recipeRepository.findByMatchingBaseWines(baseWineList, baseWineList.size()).stream()
+                .map(RecipeDTO::from)
+                .toList();
     }
 
     /**
+     * 先檢查重名再上傳圖片，避免重名失敗時 Cloudinary 留下沒人用的圖
+     *
      * @param request 酒譜內容
      * @param image   酒譜圖片
      */
+    @Transactional
     public void addRecipe(RecipeRequest request, MultipartFile image) {
+        if (recipeRepository.existsByEnTitleOrZhTitle(request.enTitle(), request.zhTitle())) {
+            throw new BusinessException("酒譜名稱已存在，無法重複新增");
+        }
+
         Recipe recipe = new Recipe();
         recipe.setEnTitle(request.enTitle());
         recipe.setZhTitle(request.zhTitle());
@@ -69,12 +85,20 @@ public class RecipeService {
     }
 
     /**
+     * 名稱沿用自己原本的不算重名，跟別杯相同才擋下
+     * existingRecipe 是 managed entity，交易結束時自動 flush，不用再呼叫 save
+     *
      * @param recipeId 酒譜 ID
      * @param request  酒譜內容
      * @param image    新圖片，未帶則保留原圖
      */
+    @Transactional
     public void updateRecipe(Integer recipeId, RecipeRequest request, MultipartFile image) {
         Recipe existingRecipe = getRecipe(recipeId);
+        // 要在改 Entity 欄位之前檢查，否則查詢前的 auto flush 會先把重名寫進 DB 撞 unique
+        if (recipeRepository.existsTitleInOtherRecipe(request.enTitle(), request.zhTitle(), recipeId)) {
+            throw new BusinessException("酒譜名稱與其他酒譜重複，無法更新");
+        }
 
         existingRecipe.setEnTitle(request.enTitle());
         existingRecipe.setZhTitle(request.zhTitle());
@@ -88,13 +112,12 @@ public class RecipeService {
         // 清空舊的材料並設置新的材料
         existingRecipe.getMaterials().clear();
         existingRecipe.getMaterials().addAll(toMaterials(request.materials(), existingRecipe));
-
-        recipeRepository.save(existingRecipe);
     }
 
     /**
      * @param recipeId 酒譜 ID
      */
+    @Transactional
     public void deleteRecipe(Integer recipeId) {
         recipeRepository.delete(getRecipe(recipeId));
     }
@@ -103,6 +126,7 @@ public class RecipeService {
      * @param recipeId 酒譜 ID
      * @return 對應的酒譜 Entity
      */
+    @Transactional(readOnly = true)
     public Recipe getRecipe(Integer recipeId) {
         Recipe recipe = recipeRepository.findByRecipeId(recipeId);
         if (recipe == null) {
@@ -115,6 +139,7 @@ public class RecipeService {
      * @param keyword 中英文名稱關鍵字
      * @return 符合關鍵字的酒譜
      */
+    @Transactional(readOnly = true)
     public List<Recipe> searchRecipes(String keyword) {
         return recipeRepository.searchByKeyword(keyword);
     }
@@ -133,6 +158,7 @@ public class RecipeService {
 
     /**
      * 依名稱取得基酒，資料庫沒有的自動新建
+     * 跟著呼叫端的交易，酒譜存檔失敗時新建的基酒一起回滾
      *
      * @param names 基酒名稱清單
      * @return 對應的基酒 Entity 清單
