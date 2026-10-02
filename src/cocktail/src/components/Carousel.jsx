@@ -27,17 +27,20 @@ const Carousel = ({images}) => {
         const interval = setInterval(() => {
             // 使用函式型更新，避免吃到舊的 currentIndex
             setIsAnimating(true);
-            setCurrentIndex((prevIndex) => prevIndex + 1);
+            // 分頁在背景時 interval 照跑但 transition 不會播，最多只推到最後面那張假的圖1，
+            // 避免切回來時已經超出圖片範圍變成空白
+            setCurrentIndex((prevIndex) => Math.min(prevIndex + 1, images.length + 1));
         }, 6000);
         //確保舊的定時器不會繼續跑，避免記憶體洩漏與重複執行
         return () => clearInterval(interval);
-    }, []);
+    }, [images.length]);
 
     //動畫播完才處理無縫接回，不必跟 CSS 的 0.5s 對時間
     const handleTransitionEnd = () => {
         setIsAnimating(false);
         //現在停在最後面那張假的圖1，關掉動畫後瞬移回真正的第一張
-        if (currentIndex === images.length + 1) {
+        //用 >= 而不是 ===，就算 index 因為任何原因超過了也能接回來
+        if (currentIndex >= images.length + 1) {
             setCurrentIndex(1);
         }
     };
