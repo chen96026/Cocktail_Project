@@ -16,7 +16,7 @@ export const request = async (url, options = {}) => {
     if (response.status === 204) {
         return null;
     }
-    // 後端所有端點都回 JSON（含新增／更新／刪除的 {message}）
+    // 後端所有端點都回 JSON（含新增 201、更新／刪除 200 的 {message}），response.ok 涵蓋所有 2xx
     return response.json();
 };
 

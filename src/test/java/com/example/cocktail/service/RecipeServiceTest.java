@@ -41,6 +41,7 @@ import static org.mockito.Mockito.when;
  * 　　　　　2026-10-02 Harry 補全部列表與重名檢查測試，取有組合的酒譜改用 filter
  * 　　　　　2026-10-02 Harry 組合改存 Recipe.combination，刪除測試改驗證有組合的酒譜數與組合本身保留
  * 　　　　　2026-10-02 Harry 組合詳細 DTO 更名為 CocktailDetailDTO
+ * 　　　　　2026-10-02 Harry 列表改用合併後的 findRecipes，新增酒譜改驗證回傳的 ID
  */
 @SpringBootTest
 @Transactional
@@ -92,8 +93,8 @@ class RecipeServiceTest {
         Integer noBaseWineId = recipeRepository.saveAndFlush(noBaseWine).getRecipeId();
         entityManager.clear();
 
-        List<RecipeDTO> all = recipeService.getAllRecipes();
-        List<RecipeDTO> allByBaseWine = recipeService.getRecipesByBaseWine(List.of("All"));
+        List<RecipeDTO> all = recipeService.findRecipes(null, null);
+        List<RecipeDTO> allByBaseWine = recipeService.findRecipes(List.of("All"), null);
 
         assertEquals(recipeRepository.count(), all.size());
         assertTrue(all.stream().anyMatch(r -> r.recipeId().equals(noBaseWineId) && r.baseWines().isEmpty()));
@@ -119,11 +120,12 @@ class RecipeServiceTest {
         when(cloudinaryService.uploadImage(any())).thenReturn("https://example.com/new.jpg");
         long recipes = recipeRepository.count();
 
-        recipeService.addRecipe(request(NEW_EN_TITLE, NEW_ZH_TITLE), image());
+        Integer recipeId = recipeService.addRecipe(request(NEW_EN_TITLE, NEW_ZH_TITLE), image());
 
         verify(cloudinaryService).uploadImage(any());
         assertEquals(recipes + 1, recipeRepository.count());
-        Recipe saved = findByEnTitle(NEW_EN_TITLE);
+        Recipe saved = recipeRepository.findById(recipeId).orElseThrow();
+        assertEquals(NEW_EN_TITLE, saved.getEnTitle());
         assertEquals("https://example.com/new.jpg", saved.getImage());
         assertEquals(NEW_ZH_TITLE, saved.getZhTitle());
     }
@@ -181,17 +183,6 @@ class RecipeServiceTest {
      */
     private Recipe anyRecipe() {
         return recipeRepository.findAll().get(0);
-    }
-
-    /**
-     * @param enTitle 英文名稱
-     * @return 英文名稱完全相同的酒譜
-     */
-    private Recipe findByEnTitle(String enTitle) {
-        return recipeRepository.searchByKeyword(enTitle).stream()
-                .filter(r -> r.getEnTitle().equals(enTitle))
-                .findFirst()
-                .orElseThrow();
     }
 
     /**

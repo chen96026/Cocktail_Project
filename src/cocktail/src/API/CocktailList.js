@@ -1,22 +1,23 @@
 import {request} from "./request.js";
 
 /**
- * @param baseWines 基酒名稱陣列
+ * 酒譜列表，基酒與關鍵字一起送，後端兩個條件取交集
+ * 基酒要全部符合；空陣列或含 All 表示不篩基酒，空白關鍵字表示不篩關鍵字
+ *
+ * @param baseWines 已勾選的基酒名稱陣列
+ * @param keyword   中英文名稱關鍵字
  */
-export const findRecipeByBaseWine = (baseWines) =>
-    request(`/lastwine/getRecipesByBaseWine?baseWine=${encodeURIComponent(baseWines.join(","))}`);
-
-export const findAllRecipe = async () => {
-    const data = await request("/lastwine/getAllRecipe");
+export const findRecipes = async ({baseWines = [], keyword = ""} = {}) => {
+    const params = new URLSearchParams();
+    baseWines.forEach((baseWine) => params.append("baseWine", baseWine));
+    if (keyword.trim()) {
+        params.append("keyword", keyword.trim());
+    }
+    const query = params.toString();
+    const data = await request(query ? `/lastwine/recipes?${query}` : "/lastwine/recipes");
     if (!Array.isArray(data)) {
         console.error("後端回傳錯誤，不是陣列");
         return [];
     }
     return data;
 };
-
-/**
- * @param keyword 中英文名稱關鍵字
- */
-export const searchRecipeByKeyword = (keyword) =>
-    request(`/lastwine/search?keyword=${encodeURIComponent(keyword)}`);

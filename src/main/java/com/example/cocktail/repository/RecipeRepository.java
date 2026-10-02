@@ -16,6 +16,16 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
     @Query("SELECT r FROM Recipe r JOIN r.baseWines b WHERE b.name IN :baseWines GROUP BY r HAVING COUNT(DISTINCT b.name) = :size")
     public List<Recipe> findByMatchingBaseWines(@Param("baseWines") List<String> baseWines, @Param("size") int size);
 
+    // 基酒與關鍵字同時篩選：基酒規則同 findByMatchingBaseWines，關鍵字規則同 searchByKeyword，兩者取交集
+    // 關鍵字是酒譜本身的欄位，先在 WHERE 濾掉不符的酒譜，不影響 HAVING 對基酒數量的判斷
+    @Query("SELECT r FROM Recipe r JOIN r.baseWines b " +
+            "WHERE b.name IN :baseWines " +
+            "AND (LOWER(r.enTitle) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(r.zhTitle) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+            "GROUP BY r HAVING COUNT(DISTINCT b.name) = :size")
+    public List<Recipe> findByMatchingBaseWinesAndKeyword(@Param("baseWines") List<String> baseWines,
+                                                          @Param("size") int size,
+                                                          @Param("keyword") String keyword);
+
     // 找到該Id的酒譜
     public Recipe findByRecipeId(Integer recipeId);
 

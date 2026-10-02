@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/lastwine")
+@RequestMapping("/lastwine/recipe-combinations")
 @Tag(name = "Admin", description = "API")
 public class RecipeCombinationController {
     private final RecipeCombinationService recipeCombinationService;
@@ -22,16 +22,21 @@ public class RecipeCombinationController {
     }
 
     // 查詢所有調酒與組合
-    @GetMapping("/allCombinations")
+    @GetMapping
     @Operation(summary = "後台查詢所有調酒與組合")
     public ResponseEntity<List<CocktailDetailDTO>> getAllRecipeCombinations() {
         List<CocktailDetailDTO> combinations = recipeCombinationService.getAllRecipeCombinations();
         return ResponseEntity.ok(combinations);
     }
 
-    // 分配組合給調酒
-    @PostMapping("/assignCombinations")
-    @Operation(summary = "後台分配調酒與組合")
+    /**
+     * 只改有帶到的酒譜，沒帶到的維持原本的組合，屬於部分更新所以用 PATCH
+     *
+     * @param assignments 要分配的酒譜與組合
+     * @return 成功訊息
+     */
+    @PatchMapping
+    @Operation(summary = "後台整批分配調酒與組合（只更新有帶到的酒譜）")
     public ResponseEntity<Map<String, String>> assignAllCombinations(@RequestBody List<AssignmentRequest> assignments) {
         recipeCombinationService.assignCombinations(assignments);
         return ResponseEntity.ok(Map.of("message", "所有組合分配成功"));

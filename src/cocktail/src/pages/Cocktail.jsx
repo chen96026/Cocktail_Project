@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useState} from "react";
 import CocktailList from "../components/CocktailList";
 import FilterSidebar from "../components/FilterSidebar";
-import {findAllRecipe, findRecipeByBaseWine, searchRecipeByKeyword} from "../API/CocktailList.js";
+import {findRecipes} from "../API/CocktailList.js";
 
 const CocktailsPage = () => {
     const [cocktails, setCocktails] = useState([]);// 調酒列表
@@ -11,18 +11,9 @@ const CocktailsPage = () => {
 
     const loadMoreCocktails = useCallback(async () => {
         setLoading(true);
-        let data = [];
         try {
-            if (searchQuery) {
-                data = await searchRecipeByKeyword(searchQuery); // 搜尋酒譜
-            }
-            //filters.length=>EX:["Vodka", "Gin"]
-            else if (filters.length === 0 || filters.includes("All")) {
-                data = await findAllRecipe(); // 全部酒譜
-            } else {
-                data = await findRecipeByBaseWine(filters);
-            }
-            setCocktails(data); // 更新酒譜列表
+            // 關鍵字和已勾選的基酒一起送，後端取交集；filters 例如 ["Vodka", "Gin"] 或 ["All"]
+            setCocktails(await findRecipes({baseWines: filters, keyword: searchQuery}));
         } catch (error) {
             console.error("無法加載", error);
         } finally {

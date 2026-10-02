@@ -18,12 +18,13 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * 後台組合相關端點的請求／回應契約：分配組合、新增組合、列出組合
+ * 後台組合相關端點的請求／回應契約：分配組合、新增組合、列出組合，以及依組合查詢的篩選器與詳細頁
  * 會寫資料，整個測試包在交易裡結束後回滾，不影響其他測試
  *
  * @author Harry
@@ -31,11 +32,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * 異動歷史：2026-10-02 Harry 新建
  * 　　　　　2026-10-02 Harry 補沒有分配組合的酒譜在列表與詳細頁的行為
  * 　　　　　2026-10-02 Harry 組合 Entity 更名為 Combination
+ * 　　　　　2026-10-02 Harry API 路徑改為 REST 風格，新增組合改回傳 201，補篩選器與詳細頁的端點測試
  */
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
 class AdminApiTest {
+
+    private static final String RECIPE_COMBINATIONS = "/lastwine/recipe-combinations";
+    private static final String COMBINATIONS = "/lastwine/combinations";
 
     @Autowired
     private MockMvc mockMvc;
@@ -78,7 +83,7 @@ class AdminApiTest {
                 "[{\"fkRecipeId\": {\"recipeId\": " + recipeId + "}, \"fkCombinationId\": {\"combinationId\": " + other + "}}]"
         );
         for (String body : invalidBodies) {
-            mockMvc.perform(post("/lastwine/assignCombinations").contentType(MediaType.APPLICATION_JSON).content(body))
+            mockMvc.perform(patch(RECIPE_COMBINATIONS).contentType(MediaType.APPLICATION_JSON).content(body))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.message").isNotEmpty());
         }
@@ -97,16 +102,43 @@ class AdminApiTest {
         int combinationId = combinationRepository.findAll().get(0).getCombinationId();
 
         // 後台列表是 LEFT JOIN，沒分配組合的酒譜也要列出，組合欄位為 null
-        mockMvc.perform(get("/lastwine/allCombinations"))
+        mockMvc.perform(get(RECIPE_COMBINATIONS))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value((int) recipeRepository.count()))
                 .andExpect(jsonPath("$[?(@.recipeId == %d && @.combinationId == null)]", recipeId).isNotEmpty());
         // 篩選器的詳細資料只看有組合的酒譜
-        mockMvc.perform(get("/lastwine/getCocktailDetail/" + recipeId))
+        mockMvc.perform(get("/lastwine/recipes/" + recipeId + "/detail"))
                 .andExpect(status().isNotFound());
 
         assign(assignment(recipeId, combinationId)).andExpect(status().isOk());
         assertEquals(combinationId, cocktailSelectorService.getCocktailDetail(recipeId).combinationId());
+        mockMvc.perform(get("/lastwine/recipes/" + recipeId + "/detail"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.recipeId").value(recipeId))
+                .andExpect(jsonPath("$.combinationId").value(combinationId))
+                .andExpect(jsonPath("$.materials").isArray());
+    }
+
+    @Test
+    void selectorReturnsRecipesMatchingAllFourDimensions() throws Exception {
+        Integer recipeId = recipeRepository.findAll().get(0).getRecipeId();
+        Combination combination = combinationRepository.findAll().get(0);
+        assign(assignment(recipeId, combination.getCombinationId())).andExpect(status().isOk());
+
+        mockMvc.perform(get("/lastwine/selector")
+                        .param("mood", combination.getMood())
+                        .param("taste", combination.getTaste())
+                        .param("tone", combination.getTone())
+                        .param("drunk", combination.getDrunk()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[?(@.recipeId == %d)]", recipeId).isNotEmpty());
+        // 少帶任一個條件就不會有組合符合，跟改版前 body 缺欄位的行為一致
+        mockMvc.perform(get("/lastwine/selector")
+                        .param("mood", combination.getMood())
+                        .param("taste", combination.getTaste())
+                        .param("tone", combination.getTone()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
     }
 
     @Test
@@ -114,12 +146,12 @@ class AdminApiTest {
         long before = combinationRepository.count();
         String body = "{\"mood\": \"測試心情\", \"taste\": \"測試口味\", \"tone\": \"測試冷暖\", \"drunk\": \"測試醉度\"}";
 
-        mockMvc.perform(post("/lastwine/addFourCombination").contentType(MediaType.APPLICATION_JSON).content(body))
-                .andExpect(status().isOk());
-        mockMvc.perform(post("/lastwine/addFourCombination").contentType(MediaType.APPLICATION_JSON).content(body))
+        mockMvc.perform(post(COMBINATIONS).contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isCreated());
+        mockMvc.perform(post(COMBINATIONS).contentType(MediaType.APPLICATION_JSON).content(body))
                 .andExpect(status().isBadRequest());
 
-        mockMvc.perform(get("/lastwine/getAllCombinations"))
+        mockMvc.perform(get(COMBINATIONS))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value((int) (before + 1)))
                 .andExpect(jsonPath("$[0].combinationId").isNumber())
@@ -131,10 +163,10 @@ class AdminApiTest {
 
     /**
      * @param assignments 一或多筆以逗號串接的分配 JSON
-     * @return 送出 assignCombinations 的結果
+     * @return 送出整批分配的結果
      */
     private ResultActions assign(String assignments) throws Exception {
-        return mockMvc.perform(post("/lastwine/assignCombinations")
+        return mockMvc.perform(patch(RECIPE_COMBINATIONS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("[" + assignments + "]"));
     }

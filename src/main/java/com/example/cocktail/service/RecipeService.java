@@ -16,11 +16,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class RecipeService {
+
+    // 前端基酒篩選的「全部」選項
+    private static final String ALL_BASE_WINES = "All";
 
     private final RecipeRepository recipeRepository;
     private final BaseWineRepository baseWineRepository;
@@ -35,28 +39,18 @@ public class RecipeService {
     }
 
     /**
+     * 酒譜列表，基酒與關鍵字都是選填，兩個都帶時取交集
+     * 基酒：酒譜要包含所有指定的基酒；不帶、只有空白或含 All 表示不篩基酒
+     * 關鍵字：中英文名稱模糊比對、不分大小寫；不帶或只有空白表示不篩關鍵字
      * 材料、基酒靠 hibernate.default_batch_fetch_size 批次載入，不會逐筆查詢
      *
-     * @return 所有酒譜（含沒有勾基酒的）
+     * @param baseWines 基酒名稱清單，元素可再以逗號分隔
+     * @param keyword   中英文名稱關鍵字
+     * @return 符合條件的酒譜（都不篩時含沒有勾基酒的）
      */
     @Transactional(readOnly = true)
-    public List<RecipeDTO> getAllRecipes() {
-        return recipeRepository.findAll().stream()
-                .map(RecipeDTO::from)
-                .toList();
-    }
-
-    /**
-     * @param baseWineList 基酒名稱清單，含 All 時回傳全部
-     * @return 符合基酒條件的酒譜
-     */
-    @Transactional(readOnly = true)
-    public List<RecipeDTO> getRecipesByBaseWine(List<String> baseWineList) {
-        // All 跟 getAllRecipe 走同一條路徑，兩邊的「全部」結果一致
-        if (baseWineList.contains("All")) {
-            return getAllRecipes();
-        }
-        return recipeRepository.findByMatchingBaseWines(baseWineList, baseWineList.size()).stream()
+    public List<RecipeDTO> findRecipes(List<String> baseWines, String keyword) {
+        return queryRecipes(toBaseWineFilter(baseWines), keyword == null ? "" : keyword.strip()).stream()
                 .map(RecipeDTO::from)
                 .toList();
     }
@@ -66,9 +60,10 @@ public class RecipeService {
      *
      * @param request 酒譜內容
      * @param image   酒譜圖片
+     * @return 新酒譜的 ID
      */
     @Transactional
-    public void addRecipe(RecipeRequest request, MultipartFile image) {
+    public Integer addRecipe(RecipeRequest request, MultipartFile image) {
         if (recipeRepository.existsByEnTitleOrZhTitle(request.enTitle(), request.zhTitle())) {
             throw new BusinessException("酒譜名稱已存在，無法重複新增");
         }
@@ -81,7 +76,7 @@ public class RecipeService {
         recipe.setBaseWines(resolveBaseWines(request.baseWines()));
         recipe.setMaterials(toMaterials(request.materials(), recipe));
 
-        recipeRepository.save(recipe);
+        return recipeRepository.save(recipe).getRecipeId();
     }
 
     /**
@@ -134,14 +129,44 @@ public class RecipeService {
     }
 
     /**
-     * @param keyword 中英文名稱關鍵字
-     * @return 符合關鍵字的酒譜
+     * 依有帶的條件選查詢，都不帶時跟 All 一樣走 findAll，兩條「全部」的結果一致
+     *
+     * @param baseWines 已整理過的基酒名稱，空清單表示不篩基酒
+     * @param keyword   已去頭尾空白的關鍵字，空字串表示不篩關鍵字
+     * @return 符合條件的酒譜 Entity
      */
-    @Transactional(readOnly = true)
-    public List<RecipeDTO> searchRecipes(String keyword) {
-        return recipeRepository.searchByKeyword(keyword).stream()
-                .map(RecipeDTO::from)
+    private List<Recipe> queryRecipes(List<String> baseWines, String keyword) {
+        boolean byBaseWine = !baseWines.isEmpty();
+        boolean byKeyword = !keyword.isEmpty();
+        if (byBaseWine && byKeyword) {
+            return recipeRepository.findByMatchingBaseWinesAndKeyword(baseWines, baseWines.size(), keyword);
+        }
+        if (byBaseWine) {
+            return recipeRepository.findByMatchingBaseWines(baseWines, baseWines.size());
+        }
+        if (byKeyword) {
+            return recipeRepository.searchByKeyword(keyword);
+        }
+        return recipeRepository.findAll();
+    }
+
+    /**
+     * 查詢用 COUNT(DISTINCT) 比對數量，重複的名稱要先去掉，否則永遠湊不到數
+     *
+     * @param baseWines 前端帶來的基酒名稱，可能是逗號分隔、重複或空白
+     * @return 去重後的基酒名稱；未指定或含 All 時為空清單
+     */
+    private static List<String> toBaseWineFilter(List<String> baseWines) {
+        if (baseWines == null) {
+            return List.of();
+        }
+        List<String> names = baseWines.stream()
+                .flatMap(value -> Arrays.stream(value.split(",")))
+                .map(String::strip)
+                .filter(name -> !name.isEmpty())
+                .distinct()
                 .toList();
+        return names.contains(ALL_BASE_WINES) ? List.of() : names;
     }
 
     /**

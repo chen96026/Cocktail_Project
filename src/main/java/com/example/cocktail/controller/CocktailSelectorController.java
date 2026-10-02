@@ -22,15 +22,29 @@ public class CocktailSelectorController {
         this.cocktailSelectorService = cocktailSelectorService;
     }
 
-    @PostMapping("/getCocktailSelector")
+    /**
+     * 四個條件沿用改版前的行為：任一沒帶就不會有組合符合，回空陣列
+     *
+     * @param mood  心情
+     * @param taste 口味
+     * @param tone  冷暖
+     * @param drunk 醉度
+     * @return 符合四維度組合的調酒
+     */
+    @GetMapping("/selector")
     @Operation(summary = "篩選器符合組合之調酒")
-    public ResponseEntity<List<CocktailBasicDTO>> getCocktailSelector(@RequestBody CocktailSelectorDTO selector) {
+    public ResponseEntity<List<CocktailBasicDTO>> getCocktailSelector(
+            @RequestParam(value = "mood", required = false) String mood,
+            @RequestParam(value = "taste", required = false) String taste,
+            @RequestParam(value = "tone", required = false) String tone,
+            @RequestParam(value = "drunk", required = false) String drunk) {
+        CocktailSelectorDTO selector = new CocktailSelectorDTO(mood, taste, tone, drunk);
         return ResponseEntity.ok(cocktailSelectorService.findRecipesByCombination(selector));
     }
 
-    @GetMapping("/getCocktailDetail/{recipeId}")
-    @Operation(summary = "篩選器符合調酒之資訊")
-    public ResponseEntity<CocktailDetailDTO> getCocktailDetail(@PathVariable Integer recipeId) {
+    @GetMapping("/recipes/{recipeId}/detail")
+    @Operation(summary = "篩選器符合調酒之資訊（含組合與材料，沒有分配組合時回 404）")
+    public ResponseEntity<CocktailDetailDTO> getCocktailDetail(@PathVariable("recipeId") Integer recipeId) {
         return ResponseEntity.ok(cocktailSelectorService.getCocktailDetail(recipeId));
     }
 }
