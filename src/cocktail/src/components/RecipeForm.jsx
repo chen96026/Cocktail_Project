@@ -30,6 +30,8 @@ const RecipeForm = ({
     const [baseWines, setBaseWines] = useState([]);
     const [method, setMethod] = useState("");
     const [image, setImage] = useState(null);
+    // file input 是 uncontrolled，清空 image state 畫面上的檔名還在，改 key 讓它重新產生
+    const [imageInputKey, setImageInputKey] = useState(0);
     const [materials, setMaterials] = useState([emptyMaterial(), emptyMaterial(), emptyMaterial()]);
 
     // 編輯時資料是非同步載入的，到了才填進表單
@@ -67,6 +69,7 @@ const RecipeForm = ({
         setBaseWines([]);
         setMethod("");
         setImage(null);
+        setImageInputKey((prev) => prev + 1);
         setMaterials([emptyMaterial(), emptyMaterial(), emptyMaterial()]);
     };
 
@@ -74,6 +77,11 @@ const RecipeForm = ({
         event.preventDefault();
         if (!enTitle || !zhTitle) {
             Swal.fire({title: "標題不能為空！", icon: "error", confirmButtonText: "返回"});
+            return;
+        }
+        // checkbox 群組沒辦法用 required 擋，送出前自己檢查
+        if (baseWines.length === 0) {
+            Swal.fire({title: "請至少勾選一種基酒！", icon: "error", confirmButtonText: "返回"});
             return;
         }
         const recipe = {
@@ -186,6 +194,7 @@ const RecipeForm = ({
                     <div className="form-group">
                         <label htmlFor="image">上傳圖片</label>
                         <input style={{cursor: "pointer"}}
+                               key={imageInputKey}
                                type="file"
                                id="image"
                                onChange={(e) => setImage(e.target.files[0])}
