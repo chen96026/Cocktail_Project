@@ -26,7 +26,8 @@ const EditRecipeForm = () => {
                 });
             } catch (error) {
                 console.error("載入酒譜失敗：", error);
-                Swal.fire("載入失敗", "無法載入調酒資料", "error");
+                // 顯示後端的錯誤訊息，例如 404 時是「找不到該酒譜」
+                Swal.fire("載入失敗", error.message, "error");
             }
         };
         fetchRecipeData();
