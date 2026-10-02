@@ -1,12 +1,13 @@
 package com.example.cocktail.Seed;
 
 import com.example.cocktail.Model.BaseWine;
+import com.example.cocktail.Model.Combinations;
 import com.example.cocktail.Model.Recipe;
 import com.example.cocktail.Repository.BaseWineRepository;
-import com.example.cocktail.Repository.CombinationOptionRepository;
 import com.example.cocktail.Repository.CombinationRepository;
 import com.example.cocktail.Repository.MaterialRepository;
 import com.example.cocktail.Repository.RecipeRepository;
+import com.example.cocktail.Seed.SeedProperties.CombinationSeed;
 import com.example.cocktail.Seed.SeedProperties.RecipeSeed;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * 驗證 DataSeeder 把 seed-data.yaml 完整載入 H2
@@ -29,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * @since 2026-10-02
  * 異動歷史：2026-10-02 Harry 新建
  * 　　　　　2026-10-02 Harry 取酒譜改比對完整名稱，基酒改用 Set 比較
+ * 　　　　　2026-10-02 Harry 組合改由 Recipe.combination 驗證，材料順序改靠 @OrderBy 保證
  */
 @SpringBootTest
 @Transactional
@@ -44,8 +47,6 @@ class DataSeederTest {
     private BaseWineRepository baseWineRepository;
     @Autowired
     private CombinationRepository combinationRepository;
-    @Autowired
-    private CombinationOptionRepository combinationOptionRepository;
 
     @Test
     void seedsEveryRowFromYaml() {
@@ -57,7 +58,9 @@ class DataSeederTest {
         assertEquals(seeds.stream().flatMap(s -> s.baseWines().stream()).distinct().count(), baseWineRepository.count());
         assertEquals(seeds.stream().map(RecipeSeed::combination).filter(Objects::nonNull).distinct().count(),
                 combinationRepository.count());
-        assertEquals(seeds.stream().filter(s -> s.combination() != null).count(), combinationOptionRepository.count());
+        // 每杯有組合的種子酒譜，對應的 Recipe 都要帶到組合
+        assertEquals(seeds.stream().filter(s -> s.combination() != null).count(),
+                recipeRepository.findAll().stream().filter(r -> r.getCombination() != null).count());
     }
 
     @Test
@@ -75,8 +78,10 @@ class DataSeederTest {
         // 基酒是 ManyToMany 且沒有 @OrderColumn，載入順序不保證，用 Set 比較
         assertEquals(Set.copyOf(seed.baseWines()),
                 recipe.getBaseWines().stream().map(BaseWine::getName).collect(Collectors.toSet()));
+        // 材料有 @OrderBy("materialId")，載入順序就是 YAML 裡的順序
         assertEquals(seed.materials().stream().map(m -> m.name() + "=" + m.quantity()).toList(),
                 recipe.getMaterials().stream().map(m -> m.getMaterialName() + "=" + m.getMaterialQuantity()).toList());
+        assertCombination(seed.combination(), recipe.getCombination());
     }
 
     @Test
@@ -86,5 +91,17 @@ class DataSeederTest {
                 .count();
 
         assertEquals(expected, recipeRepository.findByMatchingBaseWines(List.of("Vodka", "Others"), 2).size());
+    }
+
+    /**
+     * @param expected 種子酒譜的組合，沒有分配時為 null
+     * @param actual   酒譜實際帶到的組合
+     */
+    private static void assertCombination(CombinationSeed expected, Combinations actual) {
+        if (expected == null) {
+            assertNull(actual);
+            return;
+        }
+        assertEquals(expected, new CombinationSeed(actual.getMood(), actual.getTaste(), actual.getTone(), actual.getDrunk()));
     }
 }

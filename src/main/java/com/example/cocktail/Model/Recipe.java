@@ -26,7 +26,9 @@ public class Recipe {
     @Column
     private String image;
 
+    // 依 materialId（建立順序）排序，材料顯示順序跟新增時一致
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("materialId")
     private List<Material> materials = new ArrayList<>();
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -36,6 +38,11 @@ public class Recipe {
             inverseJoinColumns = @JoinColumn(name = "baseWineId")// 連接到BaseWine的外鍵，被控方
     )
     private List<BaseWine> baseWines = new ArrayList<>();
+
+    // 一杯酒最多一組四維度組合，尚未分配時為 null
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "combination_id")
+    private Combinations combination;
 
     public Integer getRecipeId() {
         return recipeId;
@@ -91,6 +98,14 @@ public class Recipe {
 
     public void setMaterials(List<Material> materials) {
         this.materials = materials;
+    }
+
+    public Combinations getCombination() {
+        return combination;
+    }
+
+    public void setCombination(Combinations combination) {
+        this.combination = combination;
     }
 
 }

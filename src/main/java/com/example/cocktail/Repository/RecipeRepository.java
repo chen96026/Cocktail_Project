@@ -29,11 +29,16 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
                                             @Param("zhTitle") String zhTitle,
                                             @Param("recipeId") Integer recipeId);
 
+    // 後台：所有調酒與其組合，沒分配組合的酒譜也要列出（組合欄位為 null）
+    @Query("SELECT new com.example.cocktail.DTO.CockTailDetailDTO(r.recipeId, r.image, r.enTitle, r.zhTitle, r.method, c.combinationId, c.mood, c.taste, c.tone, c.drunk) " +
+            "FROM Recipe r " +
+            "LEFT JOIN r.combination c")
+    public List<CockTailDetailDTO> findRecipeCombinationDetails();
+
     // 篩選器：找出符合四維度組合的調酒
     @Query("SELECT new com.example.cocktail.DTO.CocktailBasicDTO(r.recipeId, r.zhTitle, r.enTitle, r.image) " +
             "FROM Recipe r " +
-            "JOIN CombinationOption co ON r.recipeId = co.fkRecipeId.recipeId " +
-            "JOIN Combinations c ON co.fkCombinationId.combinationId = c.combinationId " +
+            "JOIN r.combination c " +
             "WHERE c.mood = :mood AND c.taste = :taste AND c.tone = :tone AND c.drunk = :drunk")
     public List<CocktailBasicDTO> findRecipesByCombination(
             @Param("mood") String mood,
@@ -47,8 +52,7 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
             "r.recipeId, r.image,r.enTitle, r.zhTitle, r.method, " +
             "c.combinationId, c.mood, c.taste, c.tone, c.drunk) " +
             "FROM Recipe r " +
-            "JOIN CombinationOption co ON r.recipeId = co.fkRecipeId.recipeId " +
-            "JOIN Combinations c ON co.fkCombinationId.combinationId = c.combinationId " +
+            "JOIN r.combination c " +
             "WHERE r.recipeId = :recipeId")
     public CockTailDetailDTO findDetailByRecipeId(@Param("recipeId") Integer recipeId);
 

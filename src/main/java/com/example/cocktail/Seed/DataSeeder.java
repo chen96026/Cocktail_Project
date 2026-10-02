@@ -1,12 +1,10 @@
 package com.example.cocktail.Seed;
 
 import com.example.cocktail.Model.BaseWine;
-import com.example.cocktail.Model.CombinationOption;
 import com.example.cocktail.Model.Combinations;
 import com.example.cocktail.Model.Material;
 import com.example.cocktail.Model.Recipe;
 import com.example.cocktail.Repository.BaseWineRepository;
-import com.example.cocktail.Repository.CombinationOptionRepository;
 import com.example.cocktail.Repository.CombinationRepository;
 import com.example.cocktail.Repository.RecipeRepository;
 import com.example.cocktail.Seed.SeedProperties.CombinationSeed;
@@ -32,6 +30,7 @@ import java.util.stream.Collectors;
  * @author Harry
  * @since 2026-10-02
  * 異動歷史：2026-10-02 Harry 新建
+ * 　　　　　2026-10-02 Harry 組合改為直接設定 Recipe.combination，不再寫中介表
  */
 @Component
 @Profile("!mysql")
@@ -44,18 +43,15 @@ public class DataSeeder implements CommandLineRunner {
     private final RecipeRepository recipeRepository;
     private final BaseWineRepository baseWineRepository;
     private final CombinationRepository combinationRepository;
-    private final CombinationOptionRepository combinationOptionRepository;
 
     public DataSeeder(SeedProperties seedProperties,
                       RecipeRepository recipeRepository,
                       BaseWineRepository baseWineRepository,
-                      CombinationRepository combinationRepository,
-                      CombinationOptionRepository combinationOptionRepository) {
+                      CombinationRepository combinationRepository) {
         this.seedProperties = seedProperties;
         this.recipeRepository = recipeRepository;
         this.baseWineRepository = baseWineRepository;
         this.combinationRepository = combinationRepository;
-        this.combinationOptionRepository = combinationOptionRepository;
     }
 
     /**
@@ -75,10 +71,11 @@ public class DataSeeder implements CommandLineRunner {
         Map<String, BaseWine> baseWines = new HashMap<>();
         Map<CombinationSeed, Combinations> combinations = new HashMap<>();
         for (RecipeSeed seed : seedProperties.recipes()) {
-            Recipe recipe = recipeRepository.save(toRecipe(seed, baseWines));
+            Recipe recipe = toRecipe(seed, baseWines);
             if (seed.combination() != null) {
-                assignCombination(recipe, combinations.computeIfAbsent(seed.combination(), this::saveCombination));
+                recipe.setCombination(combinations.computeIfAbsent(seed.combination(), this::saveCombination));
             }
+            recipeRepository.save(recipe);
         }
 
         log.info("Seeded {} recipes, {} base wines, {} combinations from seed-data.yaml",
@@ -132,16 +129,5 @@ public class DataSeeder implements CommandLineRunner {
         combination.setTone(seed.tone());
         combination.setDrunk(seed.drunk());
         return combinationRepository.save(combination);
-    }
-
-    /**
-     * @param recipe      已存檔的酒譜
-     * @param combination 已存檔的組合
-     */
-    private void assignCombination(Recipe recipe, Combinations combination) {
-        CombinationOption option = new CombinationOption();
-        option.setFkRecipeId(recipe);
-        option.setFkCombinationId(combination);
-        combinationOptionRepository.save(option);
     }
 }

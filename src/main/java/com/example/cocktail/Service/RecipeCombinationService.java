@@ -4,10 +4,8 @@ import com.example.cocktail.DTO.AssignmentRequest;
 import com.example.cocktail.DTO.CockTailDetailDTO;
 import com.example.cocktail.Exception.BusinessException;
 import com.example.cocktail.Exception.NotFoundException;
-import com.example.cocktail.Model.CombinationOption;
 import com.example.cocktail.Model.Combinations;
 import com.example.cocktail.Model.Recipe;
-import com.example.cocktail.Repository.CombinationOptionRepository;
 import com.example.cocktail.Repository.CombinationRepository;
 import com.example.cocktail.Repository.RecipeRepository;
 import org.springframework.stereotype.Service;
@@ -16,16 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class CombinationOptionService {
+public class RecipeCombinationService {
 
-    private final CombinationOptionRepository combinationOptionRepository;
     private final RecipeRepository recipeRepository;
     private final CombinationRepository combinationRepository;
 
-    public CombinationOptionService(CombinationOptionRepository combinationOptionRepository,
-                                    RecipeRepository recipeRepository,
+    public RecipeCombinationService(RecipeRepository recipeRepository,
                                     CombinationRepository combinationRepository) {
-        this.combinationOptionRepository = combinationOptionRepository;
         this.recipeRepository = recipeRepository;
         this.combinationRepository = combinationRepository;
     }
@@ -35,19 +30,19 @@ public class CombinationOptionService {
      */
     @Transactional(readOnly = true)
     public List<CockTailDetailDTO> getAllRecipeCombinations() {
-        return combinationOptionRepository.findRecipeCombinationDetails();
+        return recipeRepository.findRecipeCombinationDetails();
     }
 
     /**
-     * 重新分配調酒與組合，先清掉舊的再建立新的
-     * 整批放在同一個交易，避免中途失敗留下「舊的刪了、新的沒進去」的狀態
+     * 重新分配調酒與組合，組合存在 Recipe.combination，新的直接取代原本的（一杯酒最多一組）
+     * 整批放在同一個交易，任一筆失敗整批回滾
      * 任一筆缺 ID 就整批拒絕，不做任何異動
      *
      * @param assignments 要建立的調酒與組合關聯
      */
     @Transactional
     public void assignCombinations(List<AssignmentRequest> assignments) {
-        if (assignments.stream().anyMatch(CombinationOptionService::isIncomplete)) {
+        if (assignments.stream().anyMatch(RecipeCombinationService::isIncomplete)) {
             throw new BusinessException("分配資料缺少酒譜或組合 ID");
         }
         for (AssignmentRequest assignment : assignments) {
@@ -56,6 +51,8 @@ public class CombinationOptionService {
     }
 
     /**
+     * recipe 是 managed entity，交易結束時自動 flush，不用再呼叫 save
+     *
      * @param recipeId      酒譜 ID
      * @param combinationId 組合 ID
      */
@@ -65,12 +62,7 @@ public class CombinationOptionService {
         Combinations combination = combinationRepository.findById(combinationId)
                 .orElseThrow(() -> new NotFoundException("找不到該組合: " + combinationId));
 
-        combinationOptionRepository.deleteByFkRecipeId(recipe);
-
-        CombinationOption combinationOption = new CombinationOption();
-        combinationOption.setFkRecipeId(recipe);
-        combinationOption.setFkCombinationId(combination);
-        combinationOptionRepository.save(combinationOption);
+        recipe.setCombination(combination);
     }
 
     /**

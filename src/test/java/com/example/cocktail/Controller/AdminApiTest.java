@@ -1,6 +1,7 @@
 package com.example.cocktail.Controller;
 
 import com.example.cocktail.Model.Combinations;
+import com.example.cocktail.Model.Recipe;
 import com.example.cocktail.Repository.CombinationRepository;
 import com.example.cocktail.Repository.RecipeRepository;
 import com.example.cocktail.Service.CocktailSelectorService;
@@ -28,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author Harry
  * @since 2026-10-02
  * 異動歷史：2026-10-02 Harry 新建
+ * 　　　　　2026-10-02 Harry 補沒有分配組合的酒譜在列表與詳細頁的行為
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -82,6 +84,28 @@ class AdminApiTest {
 
         // 整批被拒，連同一批裡合法的那筆也不能生效
         assertEquals(original, cocktailSelectorService.getCocktailDetail(recipeId).combinationId());
+    }
+
+    @Test
+    void recipeWithoutCombinationIsListedButHasNoDetailUntilAssigned() throws Exception {
+        Recipe recipe = new Recipe();
+        recipe.setEnTitle("No Combination Cocktail");
+        recipe.setZhTitle("尚未分配組合的測試調酒");
+        recipe.setMethod("尚未分配組合");
+        Integer recipeId = recipeRepository.saveAndFlush(recipe).getRecipeId();
+        int combinationId = combinationRepository.findAll().get(0).getCombinationId();
+
+        // 後台列表是 LEFT JOIN，沒分配組合的酒譜也要列出，組合欄位為 null
+        mockMvc.perform(get("/lastwine/allCombinations"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value((int) recipeRepository.count()))
+                .andExpect(jsonPath("$[?(@.recipeId == %d && @.combinationId == null)]", recipeId).isNotEmpty());
+        // 篩選器的詳細資料只看有組合的酒譜
+        mockMvc.perform(get("/lastwine/getCocktailDetail/" + recipeId))
+                .andExpect(status().isNotFound());
+
+        assign(assignment(recipeId, combinationId)).andExpect(status().isOk());
+        assertEquals(combinationId, cocktailSelectorService.getCocktailDetail(recipeId).combinationId());
     }
 
     @Test

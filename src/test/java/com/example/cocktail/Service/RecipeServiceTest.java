@@ -7,7 +7,7 @@ import com.example.cocktail.DTO.RecipeRequest;
 import com.example.cocktail.Exception.BusinessException;
 import com.example.cocktail.Model.BaseWine;
 import com.example.cocktail.Model.Recipe;
-import com.example.cocktail.Repository.CombinationOptionRepository;
+import com.example.cocktail.Repository.CombinationRepository;
 import com.example.cocktail.Repository.RecipeRepository;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
@@ -39,6 +39,7 @@ import static org.mockito.Mockito.when;
  * @since 2026-10-02
  * 異動歷史：2026-10-02 Harry 新建
  * 　　　　　2026-10-02 Harry 補全部列表與重名檢查測試，取有組合的酒譜改用 filter
+ * 　　　　　2026-10-02 Harry 組合改存 Recipe.combination，刪除測試改驗證有組合的酒譜數與組合本身保留
  */
 @SpringBootTest
 @Transactional
@@ -52,7 +53,7 @@ class RecipeServiceTest {
     @Autowired
     private RecipeRepository recipeRepository;
     @Autowired
-    private CombinationOptionRepository combinationOptionRepository;
+    private CombinationRepository combinationRepository;
     @Autowired
     private EntityManager entityManager;
 
@@ -60,21 +61,25 @@ class RecipeServiceTest {
     private CloudinaryService cloudinaryService;
 
     @Test
-    void deleteRecipeAlsoRemovesItsCombinationOption() {
+    void deleteRecipeWithCombinationKeepsTheCombination() {
         // LEFT JOIN 沒有 ORDER BY，第一筆可能是沒分配組合的酒譜，先濾掉再取
-        CockTailDetailDTO assigned = combinationOptionRepository.findRecipeCombinationDetails().stream()
+        CockTailDetailDTO assigned = recipeRepository.findRecipeCombinationDetails().stream()
                 .filter(detail -> detail.combinationId() != null)
                 .findFirst()
                 .orElseThrow();
         long recipes = recipeRepository.count();
-        long options = combinationOptionRepository.count();
+        long assignedRecipes = countRecipesWithCombination();
+        long combinations = combinationRepository.count();
 
         recipeService.deleteRecipe(assigned.recipeId());
         recipeRepository.flush();
 
         assertEquals(recipes - 1, recipeRepository.count());
-        assertEquals(options - 1, combinationOptionRepository.count());
+        assertEquals(assignedRecipes - 1, countRecipesWithCombination());
         assertFalse(recipeRepository.existsById(assigned.recipeId()));
+        // 組合是多杯酒共用的選項，刪酒譜不能連帶刪掉組合
+        assertEquals(combinations, combinationRepository.count());
+        assertTrue(combinationRepository.existsById(assigned.combinationId()));
     }
 
     @Test
@@ -159,6 +164,15 @@ class RecipeServiceTest {
         verify(cloudinaryService, never()).uploadImage(any());
         entityManager.clear();
         assertEquals(originalEnTitle, recipeRepository.findById(targetId).orElseThrow().getEnTitle());
+    }
+
+    /**
+     * @return 有分配組合的酒譜數
+     */
+    private long countRecipesWithCombination() {
+        return recipeRepository.findRecipeCombinationDetails().stream()
+                .filter(detail -> detail.combinationId() != null)
+                .count();
     }
 
     /**
