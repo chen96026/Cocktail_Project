@@ -23,12 +23,14 @@ const FilterSidebar = ({filters, setFilters}) => {
             {BASE_WINE_FILTERS.map((base) => (
                 <div id="sidebarDiv" key={base}>
                     <div id="barDiv">
+                        {/* 用 htmlFor 綁定 checkbox，點文字也能勾選 */}
                         <input
                             type="checkbox"
+                            id={`filter${base}`}
                             checked={filters.includes(base)}
                             onChange={() => toggleFilter(base)}
                         />
-                        <label>{base}</label>
+                        <label htmlFor={`filter${base}`}>{base}</label>
                     </div>
                 </div>
             ))}

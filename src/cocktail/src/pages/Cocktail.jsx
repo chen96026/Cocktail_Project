@@ -39,7 +39,8 @@ const CocktailsPage = () => {
     return (
         <section id="cocktailSection">
             <section id="cocktail-background-img"></section>
-            <section id="cocktaillistSection">
+            {/* 外層：左邊篩選、右邊列表；列表本身的 #cocktaillistSection 在 CocktailList 裡 */}
+            <section id="cocktailContentSection">
                 <div id="cocktailFilter">
                     <FilterSidebar filters={filters} setFilters={setFilters}/>
                     <div id="searchBarDiv">

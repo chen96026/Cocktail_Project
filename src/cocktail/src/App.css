@@ -384,9 +384,12 @@ footer #backgroundslogan {
   background-position: center;
   background-repeat: no-repeat;
 }
-#cocktailSection #cocktaillistSection {
+#cocktailSection #cocktailContentSection {
   display: flex;
   align-items: start;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px;
 }
 #cocktailSection #cocktailFilter {
   background-color: #aaa;
