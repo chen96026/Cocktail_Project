@@ -94,7 +94,7 @@ cocktail:
   GET    /lastwine/combinations                          組合列表
   POST   /lastwine/combinations                          新增組合
   GET    /lastwine/recipe-combinations                   後台：酒譜與組合對照表
-  PUT    /lastwine/recipe-combinations                   後台：整批分配組合
+  PATCH  /lastwine/recipe-combinations                   後台：整批分配組合
   Swagger：/swagger-ui/index.html
 
 
@@ -170,17 +170,6 @@ ddl-auto=update 會幫 recipe 加欄位，但不會搬資料。建議在新版�
        datasource 已拆成預設（H2）/ mysql 兩個 profile
        剩 show-sql=true、Swagger 永遠開著，可以再拆 local / prod
 
-[ ] 9. 請求格式錯誤回 500，應該回 400（ApiExceptionHandler）
-       漏帶必要參數（MissingServletRequestParameterException）、JSON 壞掉或型別錯
-       （HttpMessageNotReadableException）、路徑參數型別錯如 /recipes/abc
-       （MethodArgumentTypeMismatchException）都落到最後的 catch-all
-       （404 找不到路徑、405 方法不對已經處理）
-
-[ ] 10. Spring Boot 3.4.0 偏舊
-       springdoc 停在 2.8.14：2.8.15 以後是用 Boot 3.5 build 的，在 3.4.0 上整個 app 起不來
-       springdoc 2.9 有修一批 CVE（swagger-ui 升到 5.32.5），要先升 Boot 到 3.5.x 才拿得到
-       → 依賴升級，先確認
-
 [ ] 11. 新增組合沒檢查空值：POST /lastwine/combinations 送 {} 會建出四個欄位都是 null 的組合
 
 [ ] 12. 組合列表、後台對照表的查詢沒有 ORDER BY，順序靠資料庫決定
@@ -193,6 +182,14 @@ ddl-auto=update 會幫 recipe 加欄位，但不會搬資料。建議在新版�
 
 [ ] 15. 資安（目前先略過）：application.properties 的 Cloudinary api_key / api_secret 是明文且已進 git
        → 改用環境變數，並到 Cloudinary 換一組 key
+
+[ ] 16. mysql-connector-j 寫死在 8.0.33（compile scope）
+       8.0.33 有已知 CVE（CVE-2023-22102，8.2.0 修掉）；拿掉 <version> 改由 Spring Boot BOM 管版本，
+       scope 改 runtime。只有 mysql profile 會用到，升完要回家那台實際連一次 MySQL 驗證
+       → 依賴升級，先確認
+
+[ ] 17. Spring Boot 3.5.16 是 2026-06 發布、3.5 線目前最新的版本；之後要再拿修補得升 Boot 4
+       （Spring Framework 7 / Jackson 3，屬於大改版，要另外評估）
 
 
 ################################################################################
@@ -213,6 +210,9 @@ ddl-auto=update 會幫 recipe 加欄位，但不會搬資料。建議在新版�
   材料加 @OrderBy 固定順序
 - package 改小寫、設定類別收進 config，CockTailDetailDTO / Combinations 類別改名（DB table 名稱不變）
 - API 改為 REST 風格，列表合併基酒與關鍵字查詢（順便修掉搜尋時忽略已勾基酒），舊路徑回 404
+
+- 請求參數或內容格式錯誤（漏帶參數或 multipart part、JSON 壞掉、型別錯）改回 400，不再落到 500（原待辦 9）
+- Spring Boot 3.4.0 → 3.5.16、springdoc 2.8.14 → 2.9.1（swagger-ui 5.32.14，含 2.9 的 CVE 修補）（原待辦 10）
 
 前端
 - 刪除酒譜後卡片立即從列表移除（原本會留在畫面上，再按一次刪除就 404）
